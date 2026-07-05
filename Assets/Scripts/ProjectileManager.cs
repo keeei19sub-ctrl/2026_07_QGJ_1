@@ -6,13 +6,13 @@ public class ProjectileManager : MonoBehaviour
     int max = 10;
     [SerializeField] GameObject obj;
     [SerializeField] GameObject king;
-    float radius = 1f;
     float spawnInterval = 1f;
     float spawnIntervalTimer;
 
     void Start()
     {
         spawnIntervalTimer = spawnInterval;
+        king = GameObject.Find("King");
     }
 
     // Update is called once per frame
@@ -36,8 +36,10 @@ public class ProjectileManager : MonoBehaviour
     }
     Vector2 choiceCordinate()
     {
-        Vector2 randomPoint = Random.insideUnitCircle * radius;
-        Vector2 spawnPos = (Vector2)king.transform.position + randomPoint;
+        int rnd = Random.Range(1, 3);
+        int direction = rnd == 1 ? 1 : -1;
+        Vector2 spawnPos = (Vector2)king.transform.position;
+        spawnPos += Vector2.right * 20 * direction;
         return spawnPos;
     }
     public static void destroyed()
