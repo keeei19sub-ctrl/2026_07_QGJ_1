@@ -3,7 +3,7 @@ using UnityEngine;
 public class KingHealth : MonoBehaviour
 {
     int hp;
-    int maxHp = 10;
+    int maxHp = 10000;
     void Start()
     {
         hp = maxHp;
@@ -12,7 +12,7 @@ public class KingHealth : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(hp < 0)
+        if(hp <= 0)
         {
             angry();
         }
@@ -20,7 +20,7 @@ public class KingHealth : MonoBehaviour
     public void Damage(int amount)
     {
         hp = Mathf.Clamp(hp-amount, 0, maxHp);
-        Debug.Log("damaged");
+        Debug.Log("hp"+hp);
     }
     void angry()
     {
