@@ -12,8 +12,9 @@ public class KingController : MonoBehaviour
     float shoppingTimer = 0f;
     public float shoppingMaxTime = 10.0f;
     int nowShop = 0;
-    float cordXmax = 2.35f;
+    float cordXmax = 2.7f;
     float cordXmin = -3.3f;
+    float cordYGoal = 35f;
     enum State
     {
         goShop,

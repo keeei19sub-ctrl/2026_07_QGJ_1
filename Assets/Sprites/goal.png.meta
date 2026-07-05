@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7d975ffccd5d05f42a4336a46af1c4dc
+guid: 76285315c48a1714c9ae1d94695a581b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1724822148711148119
-    second: king_0
+      213: -1314923570169941335
+    second: goal_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: king_0
+      name: goal_0
       rect:
         serializedVersion: 2
-        x: 4
-        y: 17
-        width: 184
-        height: 269
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 372
+        y: 417
+        width: 1172
+        height: 663
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9a5985de4633018e0800000000000000
-      internalID: -1724822148711148119
+      spriteID: 9a27b3dcaf370cde0800000000000000
+      internalID: -1314923570169941335
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 859044b54889f224a9f4e14ed87279b5
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      king_0: -1724822148711148119
+      goal_0: -1314923570169941335
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
