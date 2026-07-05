@@ -1,4 +1,3 @@
-using System.Reflection.Metadata.Ecma335;
 using UnityEngine;
 
 public class KingController : MonoBehaviour
@@ -10,15 +9,17 @@ public class KingController : MonoBehaviour
     [SerializeField]State state;
     bool IsShopping = false;
     float shoppingTimer = 0f;
-    public float shoppingMaxTime = 10.0f;
+    public float shoppingMaxTime = 4.0f;
     int nowShop = 0;
     float cordXmax = 2.7f;
     float cordXmin = -3.3f;
-    float cordYGoal = 35f;
+    [SerializeField] private Vector2 goalPos;
+    [SerializeField] float cordYGoal = 35f;
     enum State
     {
         goShop,
         shopping,
+        goal
     }
     void Start()
     {
@@ -85,13 +86,24 @@ public class KingController : MonoBehaviour
 
     void move()
     {
-        switch (state)
+        if(transform.position.y > cordYGoal)
         {
-            case State.goShop:
-                transform.position = Vector3.MoveTowards(transform.position, nextShop, speed * Time.deltaTime);
-                break;
-            case State.shopping:
-                break;
+            transform.position = Vector2.MoveTowards(transform.position, goalPos, speed * Time.deltaTime);
+            if(Mathf.Approximately(((Vector2)transform.position - goalPos).magnitude, 0))
+            {
+                state = State.goal;
+            }
+        }else if(state != State.goal)
+        {
+            switch (state)
+            {
+                case State.goShop:
+                    transform.position = Vector3.MoveTowards(transform.position, nextShop, speed * Time.deltaTime);
+                    break;
+                case State.shopping:
+                    break;
+            }
         }
+        
     }
 }
