@@ -3,32 +3,20 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] float timerFly = 3f;
+    [SerializeField] float timerFly = .1f;
     [SerializeField] int damage = 10;
+    [SerializeField] LayerMask targetLayer;
+    [SerializeField] float impactRadius = 0.3f;
     void Start()
     {
-        GetComponent<Collider2D>().enabled = false;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!Isfly())
-        {
-            GetComponent<Collider2D>().enabled = true;
-            ProjectileManager.destroyed();
-            Destroy(gameObject);
-        }
-        else
-        {
-            Debug.Log("flying");
-        }
-    }
-    bool Isfly()
-    {
-        timerFly -= Time.deltaTime;
-        if(timerFly < 0)return false;
-        else return true;
+        if(transform.position.magnitude > 100.0f){
+        Destroy(gameObject);
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -36,5 +24,9 @@ public class Projectile : MonoBehaviour
         if(kinghealth != null){
             kinghealth.Damage(damage);
         }
+        Destroy(gameObject);
+    }
+    void OnCollisionEnter2D(Collision2D collision){
+        Destroy(gameObject);
     }
 }

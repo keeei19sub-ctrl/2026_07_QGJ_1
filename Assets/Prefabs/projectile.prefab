@@ -47,6 +47,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   timerFly: 10
+  damage: 10
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  impactRadius: 0.3
 --- !u!212 &6425540754423435954
 SpriteRenderer:
   serializedVersion: 3
@@ -137,7 +142,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
