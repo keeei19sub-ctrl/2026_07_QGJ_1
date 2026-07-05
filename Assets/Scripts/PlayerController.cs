@@ -7,8 +7,8 @@ public class NewMonoBehaviourScript : MonoBehaviour
     Rigidbody2D rigidbody2d;
     Vector2 move;
     public float Speed = 10.0f;
-    float maxCordinateXPlus = 2.3f;
-    float maxCordinateXMinus = -3.3f;
+    float maxCordinateXPlus = 4.6f;
+    float maxCordinateXMinus = -2.7f;
     int parasolDirection = 0;
 
     [SerializeField] private Collider2D leftHitbox;

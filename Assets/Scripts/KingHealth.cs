@@ -1,12 +1,18 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class KingHealth : MonoBehaviour
 {
     int hp;
     int maxHp = 10000;
+    public int sunDamage = 10;
+    float sunTimer;
+    float sunInterval = 10;
+    public static bool shadow = false;
     void Start()
     {
         hp = maxHp;
+        sunTimer = sunInterval;
     }
 
     // Update is called once per frame
