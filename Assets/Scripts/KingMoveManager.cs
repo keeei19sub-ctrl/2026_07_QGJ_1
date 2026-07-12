@@ -5,12 +5,13 @@ public class KingMoveManager : MonoBehaviour
     private static readonly int[] StoreOffsets = { -1, 1, 2 };
 
     [SerializeField] private KingController kingController;
-    [Tooltip("1店舗目から順番に、王様が移動する座標のTransformを設定する")]
-    [SerializeField] private Transform[] storeDestinations = new Transform[0];
+    [Tooltip("店舗番号が1増えるごとに加算する座標。標準では上方向に10間隔")]
+    [SerializeField] private Vector2 storeInterval = new Vector2(0f, 10f);
     [Tooltip("スタート地点は0。王様が現在いる店舗番号")]
     [SerializeField, Min(0)] private int currentStoreNumber;
 
     private readonly int[] candidates = new int[StoreOffsets.Length];
+    private Vector2 startPosition;
     private int nextStoreNumber;
 
     public int CurrentStoreNumber => currentStoreNumber;
@@ -20,6 +21,11 @@ public class KingMoveManager : MonoBehaviour
         if (kingController == null)
         {
             kingController = GetComponent<KingController>();
+        }
+
+        if (kingController != null)
+        {
+            startPosition = kingController.transform.position;
         }
     }
 
@@ -51,14 +57,8 @@ public class KingMoveManager : MonoBehaviour
         foreach (int offset in StoreOffsets)
         {
             int storeNumber = currentStoreNumber + offset;
-            int destinationIndex = storeNumber - 1;
 
-            if (destinationIndex < 0 || destinationIndex >= storeDestinations.Length)
-            {
-                continue;
-            }
-
-            if (storeDestinations[destinationIndex] == null)
+            if (storeNumber < 1)
             {
                 continue;
             }
@@ -76,8 +76,8 @@ public class KingMoveManager : MonoBehaviour
         }
 
         nextStoreNumber = candidates[Random.Range(0, candidateCount)];
-        Transform destination = storeDestinations[nextStoreNumber - 1];
-        kingController.SetNextDestination(destination.position);
+        Vector2 destination = startPosition + storeInterval * nextStoreNumber;
+        kingController.SetNextDestination(destination);
     }
 
     private void UpdateCurrentStore()
