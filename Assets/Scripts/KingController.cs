@@ -1,8 +1,12 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class KingController : MonoBehaviour
 {
+    public event Action DestinationRequested;
+    public event Action DestinationReached;
+
     [SerializeField, Min(0f)] private float speed = 5f;
     [SerializeField, Min(0f)] private float shoppingMaxTime = 4f;
     [SerializeField] private Vector2 goalPos;
@@ -83,6 +87,7 @@ public class KingController : MonoBehaviour
     private void EnterShopping()
     {
         rb.position = nextDestination;
+        DestinationReached?.Invoke();
         shoppingTimer = shoppingMaxTime;
         ChangeState(State.Shopping);
     }
@@ -103,6 +108,11 @@ public class KingController : MonoBehaviour
 
     private void AcquireNextDestination()
     {
+        if (!pendingDestination.HasValue)
+        {
+            DestinationRequested?.Invoke();
+        }
+
         if (!pendingDestination.HasValue)
         {
             ChangeState(State.WaitingForDestination);
