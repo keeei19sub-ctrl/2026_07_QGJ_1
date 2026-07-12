@@ -83,9 +83,10 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ShopManager
   shopPrefab: {fileID: 5979107351694063518, guid: 57d01dde18df24a4bbb6b844d067f8ed, type: 3}
+  itemCatalog: {fileID: 11400000, guid: a91d6b0f7c4e4ab6bb74c9995f789ce1, type: 2}
   firstStoreOffset: 3
-  storeInterval: 4
-  lastStoreY: 35
+  storeInterval: 10
+  lastStoreY: 70
   leftStoreX: -2
   rightStoreX: 4
 --- !u!212 &706695715068655700

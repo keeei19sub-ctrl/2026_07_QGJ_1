@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3457712846819298213}
   - component: {fileID: 1700668197677172148}
   - component: {fileID: 8797603696604771404}
+  - component: {fileID: 771204986300100001}
   m_Layer: 7
   m_Name: shop
   m_TagString: Untagged
@@ -153,3 +154,20 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ShopColliderVisualizer
   colliderColor: {r: 0, g: 1, b: 0, a: 1}
+--- !u!114 &771204986300100001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5979107351694063518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58607609d5224cadae882845ba77e20c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::Shop
+  item:
+    id:
+    displayName:
+    price: 0
+    description:

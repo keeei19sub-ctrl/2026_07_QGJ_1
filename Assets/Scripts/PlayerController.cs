@@ -1,10 +1,27 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Rigidbody2D), typeof(PlayerWallet), typeof(PlayerInventory))]
 public class PlayerController : MonoBehaviour
 {
     public InputAction MoveAction;
-    public InputAction BuyItem;
+    public InputAction BuyItem = new InputAction(
+        "Buy Item",
+        InputActionType.Button,
+        "<Keyboard>/space");
+    public InputAction SelectPreviousItem = new InputAction(
+        "Select Previous Item",
+        InputActionType.Button,
+        "<Keyboard>/leftArrow");
+    public InputAction SelectNextItem = new InputAction(
+        "Select Next Item",
+        InputActionType.Button,
+        "<Keyboard>/rightArrow");
+    public InputAction ConsumeItem = new InputAction(
+        "Consume Item",
+        InputActionType.Button,
+        "<Keyboard>/e");
+
     Rigidbody2D rigidbody2d;
     Vector2 move;
     Vector2 rayDirection = Vector2.right;
@@ -15,17 +32,54 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private Collider2D leftHitbox;
     [SerializeField] private Collider2D rightHitbox;
-    void Start()
+    [SerializeField] private PlayerWallet wallet;
+    [SerializeField] private PlayerInventory inventory;
+
+    private Shop currentShop;
+
+    private void Awake()
     {
-        MoveAction.Enable();
-        BuyItem.Enable();
         rigidbody2d = GetComponent<Rigidbody2D>();
+        wallet = wallet != null ? wallet : GetComponent<PlayerWallet>();
+        inventory = inventory != null ? inventory : GetComponent<PlayerInventory>();
+
+        EnsureButtonAction(ref BuyItem, "Buy Item", "<Keyboard>/space");
+        EnsureButtonAction(ref SelectPreviousItem, "Select Previous Item", "<Keyboard>/leftArrow");
+        EnsureButtonAction(ref SelectNextItem, "Select Next Item", "<Keyboard>/rightArrow");
+        EnsureButtonAction(ref ConsumeItem, "Consume Item", "<Keyboard>/e");
+    }
+
+    private void OnEnable()
+    {
+        MoveAction?.Enable();
+        BuyItem?.Enable();
+        SelectPreviousItem?.Enable();
+        SelectNextItem?.Enable();
+        ConsumeItem?.Enable();
+    }
+
+    private void Start()
+    {
+        UIHandler.instance?.BindPlayer(wallet, inventory);
+    }
+
+    private void OnDisable()
+    {
+        MoveAction?.Disable();
+        BuyItem?.Disable();
+        SelectPreviousItem?.Disable();
+        SelectNextItem?.Disable();
+        ConsumeItem?.Disable();
+
+        currentShop = null;
+        UIHandler.instance?.HideShop();
     }
 
     void Update()
     {
-        move = MoveAction.ReadValue<Vector2>();
-        buyItem();
+        move = MoveAction != null ? MoveAction.ReadValue<Vector2>() : Vector2.zero;
+        UpdateShopInteraction();
+        UpdateInventorySelection();
         parasolDirectionChange();
         parasolChange();
     }
@@ -33,23 +87,30 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         Vector2 position = (Vector2)rigidbody2d.position + move * Speed * Time.deltaTime;
-        if(position.x > maxCordinateXPlus)position.x = maxCordinateXPlus;
-        else if (position.x < maxCordinateXMinus)position.x = maxCordinateXMinus;
-        rigidbody2d.MovePosition(position); 
+        if (position.x > maxCordinateXPlus) position.x = maxCordinateXPlus;
+        else if (position.x < maxCordinateXMinus) position.x = maxCordinateXMinus;
+        rigidbody2d.MovePosition(position);
     }
     void parasolDirectionChange()
     {
+        if (Mouse.current == null)
+        {
+            return;
+        }
+
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             parasolDirection--;
-        }else if (Mouse.current.rightButton.wasPressedThisFrame)
+        }
+        else if (Mouse.current.rightButton.wasPressedThisFrame)
         {
             parasolDirection++;
         }
         if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
             parasolDirection++;
-        }else if (Mouse.current.rightButton.wasReleasedThisFrame)
+        }
+        else if (Mouse.current.rightButton.wasReleasedThisFrame)
         {
             parasolDirection--;
         }
@@ -74,9 +135,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void buyItem()
+    private void UpdateShopInteraction()
     {
-        const float rayDistance = 5f;
+        const float rayDistance = 1f;
         if (move.sqrMagnitude > 0.001f)
         {
             rayDirection = move.normalized;
@@ -91,16 +152,68 @@ public class PlayerController : MonoBehaviour
         Color rayColor = hit.collider != null ? Color.green : Color.red;
         Debug.DrawRay(rigidbody2d.position, rayDirection * rayDistance, rayColor);
 
-        if(hit.collider != null)
+        Shop detectedShop = hit.collider != null
+            ? hit.collider.GetComponentInParent<Shop>()
+            : null;
+
+        if (detectedShop != currentShop)
         {
-            FindShop(hit);
+            currentShop = detectedShop;
+
+            if (currentShop != null)
+            {
+                UIHandler.instance?.ShowShop(currentShop);
+            }
+            else
+            {
+                UIHandler.instance?.HideShop();
+            }
+        }
+
+        if (currentShop != null && BuyItem.WasPressedThisFrame())
+        {
+            PurchaseResult result = currentShop.TryPurchase(wallet, inventory);
+            UIHandler.instance?.ShowPurchaseResult(result);
         }
     }
-    void FindShop(RaycastHit2D hit)
+
+    private void UpdateInventorySelection()
     {
-        if (BuyItem.WasPressedThisFrame())
+        if (inventory == null)
         {
-            Debug.Log("raycast hit" + hit.collider.gameObject);
+            return;
+        }
+
+        if (SelectPreviousItem.WasPressedThisFrame())
+        {
+            inventory.SelectPrevious();
+        }
+
+        if (SelectNextItem.WasPressedThisFrame())
+        {
+            inventory.SelectNext();
+        }
+
+        if (ConsumeItem.WasPressedThisFrame())
+        {
+            inventory.TryConsumeSelected();
+        }
+    }
+
+    private static void EnsureButtonAction(
+        ref InputAction action,
+        string actionName,
+        string defaultBinding)
+    {
+        if (action == null)
+        {
+            action = new InputAction(actionName, InputActionType.Button, defaultBinding);
+            return;
+        }
+
+        if (action.bindings.Count == 0)
+        {
+            action.AddBinding(defaultBinding);
         }
     }
 }

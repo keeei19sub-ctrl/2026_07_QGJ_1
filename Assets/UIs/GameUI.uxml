@@ -1,9 +1,21 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Template name="ShopUI" src="ShopUI.uxml"/>
+    <ui:Template name="ShopUI" src="project://database/Assets/UIs/ShopUI.uxml?fileID=9197481963319205126&amp;guid=a7402212833baa34d89048d8b0563019&amp;type=3#ShopUI"/>
     <ui:VisualElement name="HealthBackground" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/Sprites/UIHealthFrame.png?fileID=-5047484281555416397&amp;guid=5e413782706c8b1438a8140decd574a4&amp;type=3#UIHealthFrame_0&quot;); width: 50%; height: 50%; -unity-background-scale-mode: scale-to-fit;">
-        <ui:VisualElement name="HealthBarContainer" style="flex-grow: 1; position: absolute; height: 39px; width: 126px; top: 35px; left: 83px;">
+        <ui:VisualElement name="HealthBarContainer" style="flex-grow: 1; position: absolute; height: 28%; width: 56%; top: 34%; left: 41%;">
             <ui:VisualElement name="HealthBar" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Sprites/UIHealthBar.png?fileID=-4859573389558333075&amp;guid=6cae8b95a2b7c554cb53e5542893752e&amp;type=3#UIHealthBar_0&quot;);"/>
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:Instance template="ShopUI" name="ShopUI"/>
+    <ui:VisualElement name="PlayerStatusUI" picking-mode="Ignore" style="position: absolute; top: 20px; right: 24px; min-width: 220px; padding-top: 12px; padding-right: 18px; padding-bottom: 12px; padding-left: 18px; background-color: rgba(0, 0, 0, 0.72); border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom-right-radius: 8px; border-bottom-left-radius: 8px;">
+        <ui:Label text="所持金: 0 G" name="MoneyLabel" style="color: rgb(255, 231, 118); font-size: 22px; -unity-font-style: bold; -unity-text-align: middle-center;"/>
+    </ui:VisualElement>
+    <ui:VisualElement name="InventorySelectionUI" picking-mode="Ignore" style="position: absolute; align-self: center; bottom: 22px; min-width: 380px; padding-top: 10px; padding-right: 18px; padding-bottom: 10px; padding-left: 18px; background-color: rgba(0, 0, 0, 0.75); border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom-right-radius: 8px; border-bottom-left-radius: 8px;">
+        <ui:VisualElement style="flex-direction: row; align-items: center; justify-content: center;">
+            <ui:Label text="◀" style="color: rgb(255, 255, 255); font-size: 22px; margin-right: 14px;"/>
+            <ui:Label text="アイテムなし" name="SelectedItemLabel" style="color: rgb(255, 255, 255); font-size: 22px; -unity-font-style: bold; min-width: 190px; -unity-text-align: middle-center;"/>
+            <ui:Label text="×0" name="SelectedItemCountLabel" style="color: rgb(255, 231, 118); font-size: 22px; -unity-font-style: bold; min-width: 54px; -unity-text-align: middle-center;"/>
+            <ui:Label text="▶" style="color: rgb(255, 255, 255); font-size: 22px; margin-left: 14px;"/>
+        </ui:VisualElement>
+        <ui:Label text="← / → 選択　　E 消費" name="InventoryControlHintLabel" style="color: rgb(205, 205, 205); font-size: 15px; -unity-text-align: middle-center; margin-top: 4px;"/>
+    </ui:VisualElement>
+    <ui:Instance template="ShopUI" name="ShopUI" style="margin-left: 78%; height: 100%; right: 0; left: 0; position: absolute; margin-top: 5%; margin-bottom: auto; bottom: auto; top: -20%; padding-top: 10%; padding-bottom: 21%;"/>
 </ui:UXML>
