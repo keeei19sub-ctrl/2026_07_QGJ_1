@@ -8,6 +8,8 @@ public class UIHandler : MonoBehaviour
     private Label m_MoneyLabel;
     private Label m_SelectedItemLabel;
     private Label m_SelectedItemCountLabel;
+    private Label m_SelectedItemDescriptionLabel;
+    private VisualElement m_SelectedItemPicture;
     private Label m_ShopItemNameLabel;
     private Label m_ShopPriceLabel;
     private Label m_ShopMessageLabel;
@@ -42,11 +44,13 @@ public class UIHandler : MonoBehaviour
         m_Healthbar = root.Q<VisualElement>("HealthBar");
         m_ShopUI = root.Q<VisualElement>("ShopUI");
         m_MoneyLabel = root.Q<Label>("MoneyLabel");
-        m_SelectedItemLabel = root.Q<Label>("SelectedItemLabel");
-        m_SelectedItemCountLabel = root.Q<Label>("SelectedItemCountLabel");
-        m_ShopItemNameLabel = root.Q<Label>("ShopItemNameLabel");
-        m_ShopPriceLabel = root.Q<Label>("ShopPriceLabel");
         m_ShopMessageLabel = root.Q<Label>("ShopMessageLabel");
+        m_ShopPriceLabel = root.Q<Label>("ShopItemPrice");
+        m_ShopItemNameLabel = root.Q<Label>("ShopItemName");
+        m_SelectedItemLabel = root.Q<Label>("ItemName");
+        m_SelectedItemCountLabel = root.Q<Label>("ItemCount");
+        m_SelectedItemDescriptionLabel = root.Q<Label>("ItemDescription");
+        m_SelectedItemPicture = root.Q<VisualElement>("ItemPicture");
 
         SetHealthValue(1.0f);
         HideShop();
@@ -233,6 +237,8 @@ public class UIHandler : MonoBehaviour
         {
             SetLabelText(m_SelectedItemLabel, "アイテムなし");
             SetLabelText(m_SelectedItemCountLabel, "×0");
+            SetLabelText(m_SelectedItemDescriptionLabel, "アイテムを入手すると、ここに説明が表示されます");
+            SetItemPictureVisible(false);
             return;
         }
 
@@ -241,6 +247,18 @@ public class UIHandler : MonoBehaviour
             : selectedItem.DisplayName;
         SetLabelText(m_SelectedItemLabel, displayName);
         SetLabelText(m_SelectedItemCountLabel, $"×{selectedCount}");
+        SetLabelText(
+            m_SelectedItemDescriptionLabel,
+            string.IsNullOrWhiteSpace(selectedItem.Description) ? "説明はありません" : selectedItem.Description);
+        SetItemPictureVisible(true);
+    }
+
+    private void SetItemPictureVisible(bool visible)
+    {
+        if (m_SelectedItemPicture != null)
+        {
+            m_SelectedItemPicture.style.opacity = visible ? 1.0f : 0.25f;
+        }
     }
 
     private static void SetLabelText(Label label, string text)

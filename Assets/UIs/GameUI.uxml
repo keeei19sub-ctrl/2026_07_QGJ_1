@@ -1,21 +1,13 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="ItemResultUI" src="project://database/Assets/UIs/ItemResultUI.uxml?fileID=9197481963319205126&amp;guid=c4bb234eb3109e84aa5122267e7307f0&amp;type=3#ItemResultUI"/>
+    <ui:Template name="ItemUI" src="project://database/Assets/UIs/ItemUI.uxml?fileID=9197481963319205126&amp;guid=aaa4715adf7de514884038108a62fcf7&amp;type=3#ItemUI"/>
     <ui:Template name="ShopUI" src="project://database/Assets/UIs/ShopUI.uxml?fileID=9197481963319205126&amp;guid=a7402212833baa34d89048d8b0563019&amp;type=3#ShopUI"/>
     <ui:VisualElement name="HealthBackground" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/Sprites/UIHealthFrame.png?fileID=-5047484281555416397&amp;guid=5e413782706c8b1438a8140decd574a4&amp;type=3#UIHealthFrame_0&quot;); width: 50%; height: 50%; -unity-background-scale-mode: scale-to-fit;">
         <ui:VisualElement name="HealthBarContainer" style="flex-grow: 1; position: absolute; height: 28%; width: 56%; top: 34%; left: 41%;">
             <ui:VisualElement name="HealthBar" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Sprites/UIHealthBar.png?fileID=-4859573389558333075&amp;guid=6cae8b95a2b7c554cb53e5542893752e&amp;type=3#UIHealthBar_0&quot;);"/>
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:VisualElement name="PlayerStatusUI" picking-mode="Ignore" style="position: absolute; top: 2%; right: 2%; width: 15%; height: 8%; padding-top: 1%; padding-right: 1%; padding-bottom: 1%; padding-left: 1%; background-color: rgba(0, 0, 0, 0.72); border-top-left-radius: 8%; border-top-right-radius: 8%; border-bottom-right-radius: 8%; border-bottom-left-radius: 8%;">
-        <ui:Label text="所持金: 0 G" name="MoneyLabel" style="color: rgb(255, 231, 118); font-size: 180%; -unity-font-style: bold; -unity-text-align: middle-center; width: 100%; height: 100%;"/>
-    </ui:VisualElement>
-    <ui:VisualElement name="InventorySelectionUI" picking-mode="Ignore" style="position: absolute; left: 30%; bottom: 2%; width: 40%; height: 10%; padding-top: 1%; padding-right: 1%; padding-bottom: 1%; padding-left: 1%; background-color: rgba(0, 0, 0, 0.75); border-top-left-radius: 8%; border-top-right-radius: 8%; border-bottom-right-radius: 8%; border-bottom-left-radius: 8%;">
-        <ui:VisualElement style="flex-direction: row; align-items: center; justify-content: center; width: 100%; height: 62%;">
-            <ui:Label text="◀" style="color: rgb(255, 255, 255); font-size: 180%; margin-right: 2%; width: 8%; height: 100%; -unity-text-align: middle-center;"/>
-            <ui:Label text="アイテムなし" name="SelectedItemLabel" style="color: rgb(255, 255, 255); font-size: 180%; -unity-font-style: bold; width: 52%; height: 100%; -unity-text-align: middle-center;"/>
-            <ui:Label text="×0" name="SelectedItemCountLabel" style="color: rgb(255, 231, 118); font-size: 180%; -unity-font-style: bold; width: 16%; height: 100%; -unity-text-align: middle-center;"/>
-            <ui:Label text="▶" style="color: rgb(255, 255, 255); font-size: 180%; margin-left: 2%; width: 8%; height: 100%; -unity-text-align: middle-center;"/>
-        </ui:VisualElement>
-        <ui:Label text="← / → 選択　　E 消費" name="InventoryControlHintLabel" style="color: rgb(205, 205, 205); font-size: 125%; -unity-text-align: middle-center; margin-top: 2%; width: 100%; height: 30%;"/>
-    </ui:VisualElement>
-    <ui:Instance template="ShopUI" name="ShopUI" style="position: absolute; left: 78%; top: 5%; width: 22%; height: 75%; padding-top: 10%; padding-bottom: 21%;"/>
+    <ui:Instance template="ShopUI" name="ShopUI" style="position: absolute; left: auto; top: 0%; width: 25%; height: 100%; padding-top: 5%; padding-bottom: 25%; margin-right: 0; right: 0; padding-right: 5%;"/>
+    <ui:Instance template="ItemUI" name="ItemUI" style="height: 35%; width: 15%; position: absolute; left: auto; right: 0%; bottom: 0%;"/>
+    <ui:Instance template="ItemResultUI" style="width: 25%; right: 0%; position: absolute; top: 57%; justify-content: space-around; align-self: flex-end; height: 7%;"/>
 </ui:UXML>
