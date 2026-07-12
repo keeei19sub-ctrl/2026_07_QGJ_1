@@ -5,8 +5,10 @@ public class KingMoveManager : MonoBehaviour
     private static readonly int[] StoreOffsets = { -1, 1, 2 };
 
     [SerializeField] private KingController kingController;
-    [Tooltip("店舗番号が1増えるごとに加算する座標。標準では上方向に10間隔")]
-    [SerializeField] private Vector2 storeInterval = new Vector2(0f, 10f);
+    [Tooltip("店舗番号が1増えるごとに加算する座標。Y成分を店舗間隔として使用する")]
+    [SerializeField] private Vector2 storeInterval = new Vector2(0f, 3f);
+    [SerializeField] private float leftStoreX = -2f;
+    [SerializeField] private float rightStoreX = 4f;
     [Tooltip("スタート地点は0。王様が現在いる店舗番号")]
     [SerializeField, Min(0)] private int currentStoreNumber;
 
@@ -76,7 +78,9 @@ public class KingMoveManager : MonoBehaviour
         }
 
         nextStoreNumber = candidates[Random.Range(0, candidateCount)];
-        Vector2 destination = startPosition + storeInterval * nextStoreNumber;
+        float destinationX = Random.value < 0.5f ? leftStoreX : rightStoreX;
+        float destinationY = startPosition.y + storeInterval.y * nextStoreNumber;
+        Vector2 destination = new Vector2(destinationX, destinationY);
         kingController.SetNextDestination(destination);
     }
 
