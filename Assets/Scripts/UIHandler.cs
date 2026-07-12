@@ -4,6 +4,7 @@ using UnityEngine.UIElements;
 public class UIHandler : MonoBehaviour
 {
     private VisualElement m_Healthbar;
+    private VisualElement m_Progressbar;
     private VisualElement m_ShopUI;
     private Label m_MoneyLabel;
     private Label m_SelectedItemLabel;
@@ -42,6 +43,8 @@ public class UIHandler : MonoBehaviour
 
         VisualElement root = uiDocument.rootVisualElement;
         m_Healthbar = root.Q<VisualElement>("HealthBar");
+        m_Progressbar = root.Q<VisualElement>("ProgressBar");
+
         m_ShopUI = root.Q<VisualElement>("ShopUI");
         m_MoneyLabel = root.Q<Label>("MoneyLabel");
         m_ShopMessageLabel = root.Q<Label>("ShopMessageLabel");
@@ -161,6 +164,14 @@ public class UIHandler : MonoBehaviour
         if (m_Healthbar != null)
         {
             m_Healthbar.style.width = Length.Percent(100 * Mathf.Clamp01(percentage));
+        }
+    }
+
+    public void SetProgressValue(float percentage)
+    {
+        if (m_Progressbar != null)
+        {
+            m_Progressbar.style.width = Length.Percent(100 * Mathf.Clamp01(percentage));
         }
     }
 
