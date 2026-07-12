@@ -1,10 +1,10 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:VisualElement name="Background" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Sprites/%E5%BA%97%E5%95%86%E5%93%81.png?fileID=6158033599282355864&amp;guid=0c443279d30841f4dbafe867e02f08e7&amp;type=3#店商品_0&quot;); background-color: rgba(0, 0, 0, 0); width: 100%; height: 100%;">
         <ui:VisualElement name="ShopContent" picking-mode="Ignore" style="position: absolute; left: 8%; right: 8%; top: 20%; bottom: 15%; align-items: center; justify-content: center;">
-            <ui:Label text="商品" name="ShopItemNameLabel" style="color: rgb(255, 255, 255); font-size: 25px; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; width: 100%;"/>
-            <ui:Label text="0 G" name="ShopPriceLabel" style="color: rgb(255, 231, 118); font-size: 22px; -unity-font-style: bold; -unity-text-align: middle-center; margin-top: 7px;"/>
-            <ui:Label text="Space で購入" name="ShopPurchaseHintLabel" style="color: rgb(225, 225, 225); font-size: 16px; -unity-text-align: middle-center; margin-top: 15px;"/>
-            <ui:Label text="" name="ShopMessageLabel" style="color: rgb(255, 255, 255); font-size: 16px; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; width: 100%; min-height: 24px; margin-top: 8px;"/>
+            <ui:Label text="商品" name="ShopItemNameLabel" style="color: rgb(255, 255, 255); font-size: 210%; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; width: 100%; height: 25%;"/>
+            <ui:Label text="0 G" name="ShopPriceLabel" style="color: rgb(255, 231, 118); font-size: 180%; -unity-font-style: bold; -unity-text-align: middle-center; margin-top: 3%; width: 100%; height: 18%;"/>
+            <ui:Label text="Space で購入" name="ShopPurchaseHintLabel" style="color: rgb(225, 225, 225); font-size: 135%; -unity-text-align: middle-center; margin-top: 7%; width: 100%; height: 15%;"/>
+            <ui:Label text="" name="ShopMessageLabel" style="color: rgb(255, 255, 255); font-size: 135%; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; width: 100%; height: 25%; margin-top: 4%;"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
