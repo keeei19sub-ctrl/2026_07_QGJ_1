@@ -7,9 +7,6 @@ public class KingController : MonoBehaviour
     [SerializeField, Min(0f)] private float shoppingMaxTime = 4f;
     [SerializeField] private Vector2 goalPos;
     [SerializeField] private float goalStartY = 35f;
-    [SerializeField] private float leftShopX = -2.7f;
-    [SerializeField] private float rightShopX = 3.3f;
-    [SerializeField, Min(0.1f)] private float shopFloorInterval = 10f;
     [SerializeField, Min(0.001f)] private float arrivalDistance = 0.05f;
 
     private enum State
@@ -17,15 +14,16 @@ public class KingController : MonoBehaviour
         GoShop,
         Shopping,
         GoGoal,
-        Goal
+        Goal,
+        WaitingForDestination
     }
 
     [SerializeField] private State state = State.GoShop;
 
     private Rigidbody2D rb;
-    private Vector2 nextShop;
+    private Vector2 nextDestination;
+    private Vector2? pendingDestination;
     private float shoppingTimer;
-    private int currentShopFloor = 1;
 
     private void Awake()
     {
@@ -34,7 +32,7 @@ public class KingController : MonoBehaviour
 
     private void Start()
     {
-        SetNextShop();
+        AcquireNextDestination();
     }
 
     private void Update()
@@ -42,7 +40,7 @@ public class KingController : MonoBehaviour
         switch (state)
         {
             case State.GoShop:
-                if (HasReached(nextShop))
+                if (HasReached(nextDestination))
                 {
                     EnterShopping();
                 }
@@ -52,9 +50,7 @@ public class KingController : MonoBehaviour
                 shoppingTimer -= Time.deltaTime;
                 if (shoppingTimer <= 0f)
                 {
-                    SelectNextShopFloor();
-                    SetNextShop();
-                    ChangeState(State.GoShop);
+                    AcquireNextDestination();
                 }
                 break;
         }
@@ -70,7 +66,7 @@ public class KingController : MonoBehaviour
         switch (state)
         {
             case State.GoShop:
-                MoveTowards(nextShop);
+                MoveTowards(nextDestination);
                 break;
 
             case State.GoGoal:
@@ -86,22 +82,36 @@ public class KingController : MonoBehaviour
 
     private void EnterShopping()
     {
-        rb.position = nextShop;
+        rb.position = nextDestination;
         shoppingTimer = shoppingMaxTime;
         ChangeState(State.Shopping);
     }
 
-    private void SetNextShop()
+    /// <summary>
+    /// Sets the destination that will be acquired when the king next chooses where to go.
+    /// If the king is already waiting, the destination is acquired immediately.
+    /// </summary>
+    public void SetNextDestination(Vector2 destination)
     {
-        float x = Random.value < 0.5f ? leftShopX : rightShopX;
-        nextShop = new Vector2(x, currentShopFloor * shopFloorInterval);
+        pendingDestination = destination;
+
+        if (state == State.WaitingForDestination)
+        {
+            AcquireNextDestination();
+        }
     }
 
-    private void SelectNextShopFloor()
+    private void AcquireNextDestination()
     {
-        int roll = Random.Range(1, 11);
-        int floorDifference = roll < 3 ? -1 : roll < 7 ? 1 : roll < 10 ? 2 : 3;
-        currentShopFloor = Mathf.Max(1, currentShopFloor + floorDifference);
+        if (!pendingDestination.HasValue)
+        {
+            ChangeState(State.WaitingForDestination);
+            return;
+        }
+
+        nextDestination = pendingDestination.Value;
+        pendingDestination = null;
+        ChangeState(State.GoShop);
     }
 
     private void MoveTowards(Vector2 destination)
