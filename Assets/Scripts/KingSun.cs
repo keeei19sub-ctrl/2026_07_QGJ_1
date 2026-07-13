@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class KingSun : MonoBehaviour
 {
+    private static readonly int UmbrellaOpenParameter = Animator.StringToHash("Open");
+
     [Header("判定対象")]
     [Tooltip("このタグを持つオブジェクトと接触している間は処理をスキップする")]
     [SerializeField] private string targetTag = "Shadow";
@@ -169,7 +171,7 @@ public class KingSun : MonoBehaviour
         if (umbrellaAnimator != null)
         {
             // 左右振り中も影の内外自体は変えず、解除後の遷移先を安定させる
-            umbrellaAnimator.SetBool("Close", isInsideShadow);
+            umbrellaAnimator.SetBool(UmbrellaOpenParameter, isInsideShadow);
         }
     }
 }
