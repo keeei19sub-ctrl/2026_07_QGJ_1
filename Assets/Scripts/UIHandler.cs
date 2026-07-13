@@ -212,20 +212,18 @@ public class UIHandler : MonoBehaviour
 
     public void ShowProjectileWarning(ProjectileWarningSide side)
     {
-        SetIndicatorVisible(
+        SetElementVisible(
             m_ProjectileWarningLeft,
-            side == ProjectileWarningSide.Left,
-            0f);
-        SetIndicatorVisible(
+            side == ProjectileWarningSide.Left);
+        SetElementVisible(
             m_ProjectileWarningRight,
-            side == ProjectileWarningSide.Right,
-            0f);
+            side == ProjectileWarningSide.Right);
     }
 
     public void HideProjectileWarning()
     {
-        SetIndicatorVisible(m_ProjectileWarningLeft, false, 0f);
-        SetIndicatorVisible(m_ProjectileWarningRight, false, 0f);
+        SetElementVisible(m_ProjectileWarningLeft, false);
+        SetElementVisible(m_ProjectileWarningRight, false);
     }
 
     private void SubscribeToPlayerEvents()
@@ -346,6 +344,14 @@ public class UIHandler : MonoBehaviour
         }
 
         indicator.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+    }
+
+    private static void SetElementVisible(VisualElement element, bool visible)
+    {
+        if (element != null)
+        {
+            element.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+        }
     }
 }
 
