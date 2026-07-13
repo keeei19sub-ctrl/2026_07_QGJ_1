@@ -27,7 +27,7 @@ public class KingHealth : MonoBehaviour
     public void Damage(int amount)
     {
         hp = Mathf.Clamp(hp-amount, 0, maxHp);
-     		UIHandler.instance.SetHealthValue(hp / (float)maxHp);
+        UIHandler.instance.SetHealthValue(hp / (float)maxHp);
     }
     void angry()
     {

@@ -24,6 +24,7 @@ public sealed class Shop : MonoBehaviour
     {
         if (wallet == null || inventory == null)
         {
+            Debug.Log("null");
             return PurchaseResult.MissingPlayerState;
         }
 
@@ -33,19 +34,23 @@ public sealed class Shop : MonoBehaviour
             || inventory.Catalog == null
             || inventory.Catalog.IndexOf(item.Id) < 0)
         {
+            Debug.Log("invalidproduct");
             return PurchaseResult.InvalidProduct;
         }
 
         if (!wallet.TrySpend(item.Price))
         {
+            Debug.Log("insufficient");
             return PurchaseResult.InsufficientFunds;
         }
 
         if (!inventory.AddItem(item))
         {
+            Debug.Log("invalidProd");
             wallet.AddMoney(item.Price);
             return PurchaseResult.InvalidProduct;
         }
+            Debug.Log("succes");
 
         return PurchaseResult.Success;
     }

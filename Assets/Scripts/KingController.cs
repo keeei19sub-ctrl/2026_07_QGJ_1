@@ -8,7 +8,7 @@ public class KingController : MonoBehaviour
     public event Action DestinationReached;
 
     [SerializeField, Min(0f)] private float speed = 5f;
-    [SerializeField, Min(0f)] private float shoppingMaxTime = 4f;
+    [SerializeField, Min(0f)] private float shoppingMaxTime = 1f;
     [SerializeField] private Vector2 goalPos;
     [SerializeField] private float goalStartY = 35f;
     [SerializeField, Min(0.001f)] private float arrivalDistance = 0.05f;

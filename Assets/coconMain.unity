@@ -249,17 +249,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7321076339299950448, guid: c7b2be6cbe9166f47b5ae5261e7f25d2, type: 3}
   m_PrefabInstance: {fileID: 2000839794}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &483057737 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1897852896941178719, guid: c7b2be6cbe9166f47b5ae5261e7f25d2, type: 3}
-  m_PrefabInstance: {fileID: 2000839794}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 483057731}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45fadfc436479a04c9db285381e47fd2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KingController
 --- !u!114 &483057740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4835,11 +4824,11 @@ PrefabInstance:
       objectReference: {fileID: 483057740}
     - target: {fileID: 6514689440483257481, guid: c7b2be6cbe9166f47b5ae5261e7f25d2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.17
+      value: 0.85
       objectReference: {fileID: 0}
     - target: {fileID: 6514689440483257481, guid: c7b2be6cbe9166f47b5ae5261e7f25d2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.46
+      value: 0.39
       objectReference: {fileID: 0}
     - target: {fileID: 6514689440483257481, guid: c7b2be6cbe9166f47b5ae5261e7f25d2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4945,6 +4934,18 @@ PrefabInstance:
     - target: {fileID: 2016803035244933367, guid: d07c8f3b6342a2c4fb0c3d1ebb314915, type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4265375811370882735, guid: d07c8f3b6342a2c4fb0c3d1ebb314915, type: 3}
+      propertyPath: ConsumeItem.m_SingletonActionBindings.Array.data[0].m_Path
+      value: <Keyboard>/shift
+      objectReference: {fileID: 0}
+    - target: {fileID: 4265375811370882735, guid: d07c8f3b6342a2c4fb0c3d1ebb314915, type: 3}
+      propertyPath: SelectNextItem.m_SingletonActionBindings.Array.data[0].m_Path
+      value: <Keyboard>/e
+      objectReference: {fileID: 0}
+    - target: {fileID: 4265375811370882735, guid: d07c8f3b6342a2c4fb0c3d1ebb314915, type: 3}
+      propertyPath: SelectPreviousItem.m_SingletonActionBindings.Array.data[0].m_Path
+      value: <Keyboard>/q
       objectReference: {fileID: 0}
     - target: {fileID: 7276443828844440585, guid: d07c8f3b6342a2c4fb0c3d1ebb314915, type: 3}
       propertyPath: m_Name

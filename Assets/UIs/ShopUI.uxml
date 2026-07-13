@@ -1,10 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:VisualElement name="Background" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Sprites/%E5%BA%97%E5%95%86%E5%93%81.png?fileID=6158033599282355864&amp;guid=0c443279d30841f4dbafe867e02f08e7&amp;type=3#店商品_0&quot;); background-color: rgba(0, 0, 0, 0); width: 100%; height: 100%;">
-        <ui:VisualElement name="ShopContent" picking-mode="Ignore" style="position: absolute; left: 8%; right: 8%; top: 20%; bottom: 15%; align-items: center; justify-content: center;">
-            <ui:Label text="商品" name="ShopItemNameLabel" style="color: rgb(255, 255, 255); font-size: 210%; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; width: 100%; height: 25%;"/>
-            <ui:Label text="0 G" name="ShopPriceLabel" style="color: rgb(255, 231, 118); font-size: 180%; -unity-font-style: bold; -unity-text-align: middle-center; margin-top: 3%; width: 100%; height: 18%;"/>
-            <ui:Label text="Space で購入" name="ShopPurchaseHintLabel" style="color: rgb(225, 225, 225); font-size: 135%; -unity-text-align: middle-center; margin-top: 7%; width: 100%; height: 15%;"/>
-            <ui:Label text="" name="ShopMessageLabel" style="color: rgb(255, 255, 255); font-size: 135%; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; width: 100%; height: 25%; margin-top: 4%;"/>
-        </ui:VisualElement>
+        <ui:Label text="ItemName" name="ShopItemName" style="position: absolute; margin-top: 0%; margin-right: 0%; margin-bottom: 0%; margin-left: 0%; padding-top: 0%; padding-right: 0%; padding-bottom: 0%; padding-left: 0%; top: 10%; left: 13%; width: 36%; height: 30%; font-size: 29px;"/>
+        <ui:Label text="Price" name="ShopItemPrice" style="margin-top: 0%; margin-right: 0%; margin-bottom: 0%; margin-left: 0%; padding-top: 0%; padding-right: 0%; padding-bottom: 0%; padding-left: 0%; position: absolute; top: 12%; left: 63%; width: 23%; height: 26%; font-size: 36px;"/>
+        <ui:Label text="Description" name="ShopItemDescription" style="position: absolute; top: 60%; left: 12%; margin-top: 0%; margin-right: 0%; margin-bottom: 0%; margin-left: 0%; padding-top: 0%; padding-right: 0%; padding-bottom: 0%; padding-left: 0%; height: 29%; width: 75%; font-size: 45px;"/>
     </ui:VisualElement>
 </ui:UXML>
