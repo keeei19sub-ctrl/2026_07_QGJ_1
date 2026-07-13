@@ -9,6 +9,7 @@ public class KingHealth : MonoBehaviour
     float sunTimer;
     float sunInterval = 10;
     public static bool shadow = false;
+  	public int health { get { return hp; }}
     void Start()
     {
         hp = maxHp;
@@ -26,7 +27,7 @@ public class KingHealth : MonoBehaviour
     public void Damage(int amount)
     {
         hp = Mathf.Clamp(hp-amount, 0, maxHp);
-        Debug.Log("hp"+hp);
+        UIHandler.instance.SetHealthValue(hp / (float)maxHp);
     }
     void angry()
     {

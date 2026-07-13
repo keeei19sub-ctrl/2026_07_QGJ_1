@@ -169,6 +169,8 @@ GameObject:
   - component: {fileID: 5915405083857385658}
   - component: {fileID: 6243260852114246539}
   - component: {fileID: 296420927674031105}
+  - component: {fileID: 771204986300100002}
+  - component: {fileID: 771204986300100003}
   m_Layer: 0
   m_Name: follower_0
   m_TagString: Untagged
@@ -205,7 +207,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af6015a8404ebc448bfdf154b1a564b1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   MoveAction:
     m_Name: Move
     m_Type: 0
@@ -255,9 +257,105 @@ MonoBehaviour:
       m_Action: Move
       m_Flags: 8
     m_Flags: 0
+  BuyItem:
+    m_Name: Buy Item
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 1f0f2786-1878-49ec-88b1-27a4b5dcbb89
+    m_Processors:
+    m_Interactions:
+    m_SingletonActionBindings:
+    - m_Name:
+      m_Id: 2a0e0e31-b47b-4ae8-8eb3-bd6edb49ac25
+      m_Path: <Keyboard>/space
+      m_Interactions:
+      m_Processors:
+      m_Groups:
+      m_Action: Buy Item
+      m_Flags: 0
+    m_Flags: 0
+  SelectPreviousItem:
+    m_Name: Select Previous Item
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 3bb1be50-052e-40dd-af78-c17f8fe95a45
+    m_Processors:
+    m_Interactions:
+    m_SingletonActionBindings:
+    - m_Name:
+      m_Id: 4d4a966d-6747-4cd7-89cd-a183037e4712
+      m_Path: <Keyboard>/leftArrow
+      m_Interactions:
+      m_Processors:
+      m_Groups:
+      m_Action: Select Previous Item
+      m_Flags: 0
+    m_Flags: 0
+  SelectNextItem:
+    m_Name: Select Next Item
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 5a58ba3c-0aaf-435a-bd02-bf93e3b63fda
+    m_Processors:
+    m_Interactions:
+    m_SingletonActionBindings:
+    - m_Name:
+      m_Id: 6f041aa9-a0cb-4260-8dc5-97e73154402b
+      m_Path: <Keyboard>/rightArrow
+      m_Interactions:
+      m_Processors:
+      m_Groups:
+      m_Action: Select Next Item
+      m_Flags: 0
+    m_Flags: 0
+  ConsumeItem:
+    m_Name: Consume Item
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 7e9d5f51-ac7e-46ec-a9c6-96cd9ae66c87
+    m_Processors:
+    m_Interactions:
+    m_SingletonActionBindings:
+    - m_Name:
+      m_Id: 8bf88e9b-7891-479c-9907-68c1347efb9f
+      m_Path: <Keyboard>/e
+      m_Interactions:
+      m_Processors:
+      m_Groups:
+      m_Action: Consume Item
+      m_Flags: 0
+    m_Flags: 0
   Speed: 10
   leftHitbox: {fileID: 5412434879067278852}
   rightHitbox: {fileID: 1942096711964781411}
+  wallet: {fileID: 771204986300100003}
+  inventory: {fileID: 771204986300100002}
+--- !u!114 &771204986300100002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7276443828844440585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c88d5edf1d0479c85b29f967653679e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
+  itemCatalog: {fileID: 11400000, guid: a91d6b0f7c4e4ab6bb74c9995f789ce1, type: 2}
+--- !u!114 &771204986300100003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7276443828844440585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5323b9806cb94ab0b9d3f5d8f785ffa0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerWallet
+  initialMoney: 100
 --- !u!212 &5915405083857385658
 SpriteRenderer:
   serializedVersion: 3
@@ -439,9 +537,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3594635116427848366, guid: 6be32e466d9dac3418585216581741e7, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4533528924521364167, guid: 6be32e466d9dac3418585216581741e7, type: 3}
       propertyPath: m_Name
       value: shadow
+      objectReference: {fileID: 0}
+    - target: {fileID: 9148125433052277306, guid: 6be32e466d9dac3418585216581741e7, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

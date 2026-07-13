@@ -1,40 +1,77 @@
-using System;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] int damage = 10;
-    [SerializeField] float speed = 5f;
-    int direction;
-    void Start()
+    [SerializeField] private int damage = 10;
+    [SerializeField, Min(0f)] private float speed = 5f;
+    [SerializeField, Min(0f)] private float maxTravelDistance = 100f;
+
+    private ProjectileManager owner;
+    private Rigidbody2D rb;
+    private Vector2 direction;
+    private Vector2 spawnPosition;
+    private bool isDestroyed;
+
+    private void Awake()
     {
-        direction = transform.position.x > 0 ? -1 : 1;
+        rb = GetComponent<Rigidbody2D>();
+        spawnPosition = rb.position;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Initialize(ProjectileManager projectileOwner, Vector2 targetPosition)
     {
-        transform.position += Vector3.right * direction * speed * Time.deltaTime;
-        if(transform.position.magnitude > 100.0f){
-            ProjectileManager.destroyed();
-            Debug.Log("far");
-            Destroy(gameObject);
+        owner = projectileOwner;
+        spawnPosition = rb.position;
+        direction = (targetPosition - spawnPosition).normalized;
+
+        if (direction == Vector2.zero)
+        {
+            direction = Vector2.left;
         }
     }
-    void OnTriggerEnter2D(Collider2D collision)
+
+    private void FixedUpdate()
     {
-        KingHealth kinghealth = collision.GetComponent<KingHealth>();
-        if(kinghealth != null){
-            kinghealth.Damage(damage);
-            Debug.Log("damage?");
+        rb.MovePosition(rb.position + direction * speed * Time.fixedDeltaTime);
+
+        if (Vector2.Distance(spawnPosition, rb.position) >= maxTravelDistance)
+        {
+            DestroyProjectile();
         }
-        ProjectileManager.destroyed();
-        Debug.Log("trigger");
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        KingHealth kingHealth = collision.GetComponent<KingHealth>();
+        if (kingHealth == null)
+        {
+            return;
+        }
+
+        kingHealth.Damage(damage);
+        DestroyProjectile();
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        DestroyProjectile();
+    }
+
+    private void DestroyProjectile()
+    {
+        if (isDestroyed)
+        {
+            return;
+        }
+
+        isDestroyed = true;
+        owner?.NotifyDestroyed(this);
         Destroy(gameObject);
     }
-    void OnCollisionEnter2D(Collision2D collision){
-        ProjectileManager.destroyed();
-        Debug.Log("coll");
-        Destroy(gameObject);
+
+    private void OnDestroy()
+    {
+        owner?.NotifyDestroyed(this);
     }
 }

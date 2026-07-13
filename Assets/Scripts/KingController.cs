@@ -1,109 +1,169 @@
+using System;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class KingController : MonoBehaviour
 {
-    public float shopDist = 20;
-    public float speed = 5f;
-    Vector2 nextShop;
-    Rigidbody2D rb;
-    [SerializeField]State state;
-    bool IsShopping = false;
-    float shoppingTimer = 0f;
-    public float shoppingMaxTime = 4.0f;
-    int nowShop = 0;
-    float cordXmax = 2.7f;
-    float cordXmin = -3.3f;
+    public event Action DestinationRequested;
+    public event Action DestinationReached;
+
+    [SerializeField, Min(0f)] private float speed = 5f;
+    [SerializeField, Min(0f)] private float shoppingMaxTime = 1f;
     [SerializeField] private Vector2 goalPos;
-    [SerializeField] float cordYGoal = 35f;
-    enum State
+    [SerializeField] private float goalStartY = 35f;
+    [SerializeField, Min(0.001f)] private float arrivalDistance = 0.05f;
+
+    private enum State
     {
-        goShop,
-        shopping,
-        goal
+        GoShop,
+        Shopping,
+        GoGoal,
+        Goal,
+        WaitingForDestination
     }
-    void Start()
+
+    [SerializeField] private State state = State.GoShop;
+
+    private Rigidbody2D rb;
+    private Vector2 nextDestination;
+    private Vector2? pendingDestination;
+    private float shoppingTimer;
+    private float progressStartY;
+
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        nowShop = 1;
-        nextShop = getShopCordinate();
+        progressStartY = rb.position.y;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        ChangeState();
-        if(IsShopping)ShoppingTime();
-        move();
+        AcquireNextDestination();
     }
 
-    void ChangeState()
+    private void Update()
     {
-        Debug.Log("changeState");
-        if(state == State.goShop && Mathf.Approximately((rb.position - nextShop).magnitude, 0)){
-            state = State.shopping;
-            IsShopping = true;
-            Debug.Log("state2ing");
-        }
-        else if(state == State.shopping && !IsShopping){
-            state = State.goShop;
-            choiceShop();
-            nextShop = getShopCordinate();
-            Debug.Log("state2go");
-        }
-    }
-
-    Vector2 getShopCordinate(){
-        Vector2 vec = Vector2.zero;
-        if(Random.Range(1, 3) == 1)vec += Vector2.left * cordXmax;
-        else vec += Vector2.left * cordXmin;
-        vec += Vector2.up * nowShop * 10;
-        return vec;
-    }
-
-    void choiceShop()
-    {
-        int diff = 0;
-        int rnd = Random.Range(1, 11);
-        if(rnd < 3)diff = -1;
-        else if(rnd < 7)diff = 1;
-        else if(rnd < 10)diff = 2;
-        else diff = 3;
-        nowShop += diff;
-        if(nowShop < 0)nowShop = 1;
-        Debug.Log("choice" + nowShop);
-    }
-    void ShoppingTime()
-    {
-        if(Mathf.Approximately(shoppingTimer, 0))shoppingTimer = shoppingMaxTime;
-        shoppingTimer -= Time.deltaTime;
-        if(shoppingTimer < 0)
+        switch (state)
         {
-            shoppingTimer = 0f;
-            IsShopping = false;
-            Debug.Log("finishShopping");
+            case State.GoShop:
+                if (HasReached(nextDestination))
+                {
+                    EnterShopping();
+                }
+                break;
+
+            case State.Shopping:
+                shoppingTimer -= Time.deltaTime;
+                if (shoppingTimer <= 0f)
+                {
+                    AcquireNextDestination();
+                }
+                break;
+        }
+
+        if (state != State.GoGoal && state != State.Goal && rb.position.y >= goalStartY)
+        {
+            ChangeState(State.GoGoal);
+        }
+        UpdateProgressBar();
+    }
+
+    private void FixedUpdate()
+    {
+        switch (state)
+        {
+            case State.GoShop:
+                MoveTowards(nextDestination);
+                break;
+
+            case State.GoGoal:
+                MoveTowards(goalPos);
+                if (HasReached(goalPos))
+                {
+                    rb.position = goalPos;
+                    ChangeState(State.Goal);
+                }
+                break;
         }
     }
 
-    void move()
+    private void EnterShopping()
     {
-        if(transform.position.y > cordYGoal)
+        rb.position = nextDestination;
+        DestinationReached?.Invoke();
+        shoppingTimer = shoppingMaxTime;
+        ChangeState(State.Shopping);
+    }
+
+    /// <summary>
+    /// Sets the destination that will be acquired when the king next chooses where to go.
+    /// If the king is already waiting, the destination is acquired immediately.
+    /// </summary>
+    public void SetNextDestination(Vector2 destination)
+    {
+        pendingDestination = destination;
+
+        if (state == State.WaitingForDestination)
         {
-            transform.position = Vector2.MoveTowards(transform.position, goalPos, speed * Time.deltaTime);
-            if(Mathf.Approximately(((Vector2)transform.position - goalPos).magnitude, 0))
-            {
-                state = State.goal;
-            }
-        }else if(state != State.goal)
-        {
-            switch (state)
-            {
-                case State.goShop:
-                    transform.position = Vector3.MoveTowards(transform.position, nextShop, speed * Time.deltaTime);
-                    break;
-                case State.shopping:
-                    break;
-            }
+            AcquireNextDestination();
         }
-        
+    }
+
+    private void AcquireNextDestination()
+    {
+        if (!pendingDestination.HasValue)
+        {
+            DestinationRequested?.Invoke();
+        }
+
+        if (!pendingDestination.HasValue)
+        {
+            ChangeState(State.WaitingForDestination);
+            return;
+        }
+
+        nextDestination = pendingDestination.Value;
+        pendingDestination = null;
+        ChangeState(State.GoShop);
+    }
+
+    private void MoveTowards(Vector2 destination)
+    {
+        Vector2 position = Vector2.MoveTowards(
+            rb.position,
+            destination,
+            speed * Time.fixedDeltaTime);
+
+        rb.MovePosition(position);
+    }
+
+    private bool HasReached(Vector2 destination)
+    {
+        return Vector2.SqrMagnitude(rb.position - destination) <= arrivalDistance * arrivalDistance;
+    }
+
+    private void UpdateProgressBar()
+    {
+        UIHandler uiHandler = UIHandler.instance;
+        if (uiHandler == null)
+        {
+            return;
+        }
+
+        float progress = Mathf.Approximately(progressStartY, goalPos.y)
+            ? (rb.position.y >= goalPos.y ? 1f : 0f)
+            : Mathf.InverseLerp(progressStartY, goalPos.y, rb.position.y);
+        uiHandler.SetProgressValue(progress);
+    }
+
+    private void ChangeState(State nextState)
+    {
+        if (state == nextState)
+        {
+            return;
+        }
+
+        state = nextState;
+        Debug.Log($"King state changed to {state}.", this);
     }
 }
