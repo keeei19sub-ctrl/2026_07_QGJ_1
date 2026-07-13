@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class KingSun : MonoBehaviour
 {
+    private static readonly int UmbrellaOpenParameter = Animator.StringToHash("Open");
+
     [Header("判定対象")]
     [Tooltip("このタグを持つオブジェクトと接触している間は処理をスキップする")]
     [SerializeField] private string targetTag = "Shadow";
@@ -9,9 +11,13 @@ public class KingSun : MonoBehaviour
     [Header("動作設定")]
     [Tooltip("接触していない間に呼びたい処理の実行間隔(秒)。0なら毎フレーム")]
     [SerializeField] private float processInterval = 10f;
+
+    [Header("傘のアニメーション")]
+    [Tooltip("王様の影判定を反映する Umbrella Prefab の Animator")]
+    [SerializeField] private Animator umbrellaAnimator;
  
-    // 現在、対象タグのコリジョンに接触中かどうか
-    private bool isColliding = false;
+    // 現在、影によって太陽ダメージを防げているかどうか
+    private bool isProtectedFromSun = false;
  
     // 接触中のコライダーを個別に管理する場合のカウント
     // (複数の対象と同時接触してもExit判定がズレないようにするため)
@@ -20,14 +26,30 @@ public class KingSun : MonoBehaviour
     private float timer = 0f;
 
     KingHealth kingHealth;
+    PlayerController playerController;
+
     void Start()
     {
-        kingHealth = GetComponent<KingHealth>();  
+        kingHealth = GetComponent<KingHealth>();
+        playerController = FindAnyObjectByType<PlayerController>();
+
+        if (umbrellaAnimator == null)
+        {
+            if (playerController != null)
+            {
+                umbrellaAnimator = playerController.GetComponentInChildren<Animator>();
+            }
+        }
+
+        UpdateShadowState();
     }
     private void Update()
     {
-        // 当たっていない時だけ処理する
-        if (!isColliding)
+        // 傘を左右に振っている間も状態が変わるため毎フレーム更新する
+        UpdateShadowState();
+
+        // 太陽から守られていない時だけ処理する
+        if (!isProtectedFromSun)
         {
             if (processInterval <= 0f)
             {
@@ -106,7 +128,7 @@ public class KingSun : MonoBehaviour
         if (other.CompareTag(targetTag))
         {
             collidingCount++;
-            isColliding = collidingCount > 0;
+            UpdateShadowState();
         }
     }
 
@@ -115,7 +137,7 @@ public class KingSun : MonoBehaviour
         if (other.CompareTag(targetTag))
         {
             collidingCount++;
-            isColliding = collidingCount > 0;
+            UpdateShadowState();
         }
     }
 
@@ -124,7 +146,7 @@ public class KingSun : MonoBehaviour
         if (other.CompareTag(targetTag))
         {
             collidingCount = Mathf.Max(0, collidingCount - 1);
-            isColliding = collidingCount > 0;
+            UpdateShadowState();
         }
     }
 
@@ -133,7 +155,23 @@ public class KingSun : MonoBehaviour
         if (other.CompareTag(targetTag))
         {
             collidingCount = Mathf.Max(0, collidingCount - 1);
-            isColliding = collidingCount > 0;
+            UpdateShadowState();
+        }
+    }
+
+    private void UpdateShadowState()
+    {
+        bool isInsideShadow = collidingCount > 0;
+        bool isUmbrellaSwinging = playerController != null
+            && playerController.IsUmbrellaSwinging;
+
+        isProtectedFromSun = isInsideShadow && !isUmbrellaSwinging;
+        KingHealth.shadow = isProtectedFromSun;
+
+        if (umbrellaAnimator != null)
+        {
+            // 左右振り中も影の内外自体は変えず、解除後の遷移先を安定させる
+            umbrellaAnimator.SetBool(UmbrellaOpenParameter, isInsideShadow);
         }
     }
 }

@@ -1,17 +1,20 @@
 using UnityEngine;
+using System;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Projectile : MonoBehaviour
 {
+    public event Action<Projectile> Destroyed;
+
     [SerializeField] private int damage = 10;
     [SerializeField, Min(0f)] private float speed = 5f;
     [SerializeField, Min(0f)] private float maxTravelDistance = 100f;
 
-    private ProjectileManager owner;
     private Rigidbody2D rb;
     private Vector2 direction;
     private Vector2 spawnPosition;
     private bool isDestroyed;
+    private bool isInitialized;
 
     private void Awake()
     {
@@ -19,9 +22,8 @@ public class Projectile : MonoBehaviour
         spawnPosition = rb.position;
     }
 
-    public void Initialize(ProjectileManager projectileOwner, Vector2 targetPosition)
+    public void Initialize(Vector2 targetPosition)
     {
-        owner = projectileOwner;
         spawnPosition = rb.position;
         direction = (targetPosition - spawnPosition).normalized;
 
@@ -29,10 +31,17 @@ public class Projectile : MonoBehaviour
         {
             direction = Vector2.left;
         }
+
+        isInitialized = true;
     }
 
     private void FixedUpdate()
     {
+        if (!isInitialized)
+        {
+            return;
+        }
+
         rb.MovePosition(rb.position + direction * speed * Time.fixedDeltaTime);
 
         if (Vector2.Distance(spawnPosition, rb.position) >= maxTravelDistance)
@@ -46,6 +55,10 @@ public class Projectile : MonoBehaviour
         KingHealth kingHealth = collision.GetComponent<KingHealth>();
         if (kingHealth == null)
         {
+            if (collision.GetComponentInParent<parasol>() != null)
+            {
+                DestroyProjectile();
+            }
             return;
         }
 
@@ -66,12 +79,7 @@ public class Projectile : MonoBehaviour
         }
 
         isDestroyed = true;
-        owner?.NotifyDestroyed(this);
+        Destroyed?.Invoke(this);
         Destroy(gameObject);
-    }
-
-    private void OnDestroy()
-    {
-        owner?.NotifyDestroyed(this);
     }
 }

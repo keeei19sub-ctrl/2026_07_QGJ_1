@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8d63471c1cb3fde4187f0114fa77f697
+guid: cb9de5162905c99469623790e1242e6d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6284233109734092633
-    second: parasol_0
+      213: -3285932318300556781
+    second: parasol_close_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: parasol_0
+      name: parasol_close_0
       rect:
         serializedVersion: 2
-        x: 782
+        x: 929
         y: 295
-        width: 425
-        height: 547
+        width: 157
+        height: 541
       alignment: 9
-      pivot: {x: 0.5, y: 0.09}
+      pivot: {x: 0.5, y: 0.16}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 95fe27fc7b4163750800000000000000
-      internalID: 6284233109734092633
+      spriteID: 31238b357f50662d0800000000000000
+      internalID: -3285932318300556781
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: d905133bd527d9a40ae515eef09cc8ff
+    spriteID: 8da2ab058ca2c084cbb100489bce43d6
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      parasol_0: 6284233109734092633
+      parasol_close_0: -3285932318300556781
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

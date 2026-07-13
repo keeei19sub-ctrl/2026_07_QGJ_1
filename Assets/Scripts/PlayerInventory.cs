@@ -32,6 +32,18 @@ public sealed class PlayerInventory : MonoBehaviour
     public event Action InventoryChanged;
     public event Action SelectionChanged;
 
+    public bool CanAddItem(ItemDefinition item, int amount = 1)
+    {
+        return item != null && CanAddItem(item.Id, amount);
+    }
+
+    public bool CanAddItem(string itemId, int amount = 1)
+    {
+        EnsureStorage();
+        int index = itemCatalog == null ? -1 : itemCatalog.IndexOf(itemId);
+        return index >= 0 && amount == 1 && !HasAnyItem();
+    }
+
     private void Awake()
     {
         EnsureStorage();
@@ -68,15 +80,14 @@ public sealed class PlayerInventory : MonoBehaviour
 
     public bool AddItem(string itemId, int amount = 1)
     {
-        EnsureStorage();
-        int index = itemCatalog == null ? -1 : itemCatalog.IndexOf(itemId);
-        if (index < 0 || amount <= 0 || itemCounts[index] > int.MaxValue - amount)
+        if (!CanAddItem(itemId, amount))
         {
             return false;
         }
 
+        int index = itemCatalog.IndexOf(itemId);
         int previousSelection = selectedIndex;
-        itemCounts[index] += amount;
+        itemCounts[index] = 1;
         if (!IsOwnedIndex(selectedIndex))
         {
             selectedIndex = FindOwnedIndex(-1, 1);
@@ -91,6 +102,19 @@ public sealed class PlayerInventory : MonoBehaviour
         return true;
     }
 
+    private bool HasAnyItem()
+    {
+        for (int index = 0; index < itemCounts.Length; index++)
+        {
+            if (itemCounts[index] > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public int GetCount(ItemDefinition item)
     {
         return item == null ? 0 : GetCount(item.Id);
@@ -103,15 +127,6 @@ public sealed class PlayerInventory : MonoBehaviour
         return index >= 0 ? itemCounts[index] : 0;
     }
 
-    public bool SelectPrevious()
-    {
-        return SelectInDirection(-1);
-    }
-
-    public bool SelectNext()
-    {
-        return SelectInDirection(1);
-    }
 
     public bool TryConsumeSelected()
     {

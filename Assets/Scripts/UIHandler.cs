@@ -3,8 +3,15 @@ using UnityEngine.UIElements;
 
 public class UIHandler : MonoBehaviour
 {
+    private const float KingIndicatorWidthPercent = 5f;
+    private const float KingIndicatorEdgePaddingPercent = 1f;
+
     private VisualElement m_Healthbar;
     private VisualElement m_Progressbar;
+    private VisualElement m_KingAboveIndicator;
+    private VisualElement m_KingBelowIndicator;
+    private VisualElement m_ProjectileWarningLeft;
+    private VisualElement m_ProjectileWarningRight;
     private VisualElement m_ShopUI;
     private Label m_MoneyLabel;
     private Label m_SelectedItemLabel;
@@ -44,6 +51,10 @@ public class UIHandler : MonoBehaviour
         VisualElement root = uiDocument.rootVisualElement;
         m_Healthbar = root.Q<VisualElement>("HealthBar");
         m_Progressbar = root.Q<VisualElement>("ProgressBar");
+        m_KingAboveIndicator = root.Q<VisualElement>("KingAboveIndicator");
+        m_KingBelowIndicator = root.Q<VisualElement>("KingBelowIndicator");
+        m_ProjectileWarningLeft = root.Q<VisualElement>("ProjectileWarningLeft");
+        m_ProjectileWarningRight = root.Q<VisualElement>("ProjectileWarningRight");
 
         m_ShopUI = root.Q<VisualElement>("ShopUI");
         m_MoneyLabel = root.Q<Label>("MoneyLabel");
@@ -57,6 +68,8 @@ public class UIHandler : MonoBehaviour
 
         SetHealthValue(1.0f);
         SetProgressValue(0.0f);
+        HideKingIndicator();
+        HideProjectileWarning();
         HideShop();
         RefreshPlayerUI();
     }
@@ -146,6 +159,9 @@ public class UIHandler : MonoBehaviour
             case PurchaseResult.InsufficientFunds:
                 message = "お金が足りません";
                 break;
+            case PurchaseResult.InventoryFull:
+                message = "アイテムは1個しか持てません";
+                break;
             case PurchaseResult.InvalidProduct:
                 message = "商品が設定されていません";
                 break;
@@ -174,6 +190,40 @@ public class UIHandler : MonoBehaviour
         {
             m_Progressbar.style.height = Length.Percent(100 * Mathf.Clamp01(percentage));
         }
+    }
+
+    public void ShowKingIndicator(KingIndicatorDirection direction, float viewportX)
+    {
+        float leftPercent = Mathf.Clamp(
+            Mathf.Clamp01(viewportX) * 100f - KingIndicatorWidthPercent * 0.5f,
+            KingIndicatorEdgePaddingPercent,
+            100f - KingIndicatorWidthPercent - KingIndicatorEdgePaddingPercent);
+
+        bool showAbove = direction == KingIndicatorDirection.Above;
+        SetIndicatorVisible(m_KingAboveIndicator, showAbove, leftPercent);
+        SetIndicatorVisible(m_KingBelowIndicator, !showAbove, leftPercent);
+    }
+
+    public void HideKingIndicator()
+    {
+        SetIndicatorVisible(m_KingAboveIndicator, false, 0f);
+        SetIndicatorVisible(m_KingBelowIndicator, false, 0f);
+    }
+
+    public void ShowProjectileWarning(ProjectileWarningSide side)
+    {
+        SetElementVisible(
+            m_ProjectileWarningLeft,
+            side == ProjectileWarningSide.Left);
+        SetElementVisible(
+            m_ProjectileWarningRight,
+            side == ProjectileWarningSide.Right);
+    }
+
+    public void HideProjectileWarning()
+    {
+        SetElementVisible(m_ProjectileWarningLeft, false);
+        SetElementVisible(m_ProjectileWarningRight, false);
     }
 
     private void SubscribeToPlayerEvents()
@@ -280,4 +330,39 @@ public class UIHandler : MonoBehaviour
             label.text = text;
         }
     }
+
+    private static void SetIndicatorVisible(VisualElement indicator, bool visible, float leftPercent)
+    {
+        if (indicator == null)
+        {
+            return;
+        }
+
+        if (visible)
+        {
+            indicator.style.left = Length.Percent(leftPercent);
+        }
+
+        indicator.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+    }
+
+    private static void SetElementVisible(VisualElement element, bool visible)
+    {
+        if (element != null)
+        {
+            element.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+    }
+}
+
+public enum KingIndicatorDirection
+{
+    Above,
+    Below
+}
+
+public enum ProjectileWarningSide
+{
+    Left,
+    Right
 }
