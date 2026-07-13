@@ -5,7 +5,7 @@ public class KingHealth : MonoBehaviour
 {
     int hp;
     int maxHp = 10000;
-    public int sunDamage = 10;
+    public int sunDamage = 1;
     float sunTimer;
     float sunInterval = 10;
     public static bool shadow = false;

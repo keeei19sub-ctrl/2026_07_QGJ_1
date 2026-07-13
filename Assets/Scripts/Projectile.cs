@@ -6,7 +6,7 @@ public class Projectile : MonoBehaviour
 {
     public event Action<Projectile> Destroyed;
 
-    [SerializeField] private int damage = 10;
+    [SerializeField] private int damage = 1000;
     [SerializeField, Min(0f)] private float speed = 5f;
     [SerializeField, Min(0f)] private float maxTravelDistance = 100f;
 
@@ -58,10 +58,11 @@ public class Projectile : MonoBehaviour
             if (collision.GetComponentInParent<parasol>() != null)
             {
                 DestroyProjectile();
+                Debug.Log("Defence");
             }
             return;
         }
-
+        Debug.Log("Damage");
         kingHealth.Damage(damage);
         DestroyProjectile();
     }
