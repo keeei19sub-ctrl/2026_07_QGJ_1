@@ -7753,10 +7753,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: ProjectileManager
       objectReference: {fileID: 0}
-    - target: {fileID: 6957734520482675714, guid: a6d93db740aabfa40bb3e68f67bd54ed, type: 3}
-      propertyPath: king
-      value: 
-      objectReference: {fileID: 2114319240}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
