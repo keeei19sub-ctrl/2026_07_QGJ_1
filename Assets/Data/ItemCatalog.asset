@@ -13,59 +13,24 @@ MonoBehaviour:
   m_Name: ItemCatalog
   m_EditorClassIdentifier: Assembly-CSharp::ItemCatalog
   items:
-  - id: item_01
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E001"
-    price: 10
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-  - id: item_02
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E002"
-    price: 20
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-  - id: item_03
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E003"
+  - id: king_medicine
+    displayName: "\u738B\u306E\u85AC"
     price: 30
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-  - id: item_04
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E004"
-    price: 40
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-  - id: item_05
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E005"
+    description: "Shift\u30AD\u30FC\u3067\u4F7F\u7528\u3002\u738B\u306EHP\u3092\u6700\u5927HP\u306E10%\u56DE\u5FA9\u3059\u308B\u3002"
+    effectType: 1
+    effectAmount: 0.1
+    effectDuration: 0
+  - id: large_umbrella_potion
+    displayName: "\u5927\u5098\u306E\u85AC"
     price: 50
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-  - id: item_06
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E006"
-    price: 60
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-  - id: item_07
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E007"
+    description: "Shift\u30AD\u30FC\u3067\u4F7F\u7528\u300210\u79D2\u9593\u3001\u5098\u3068\u9632\u5FA1\u7BC4\u56F2\u30922\u500D\u306B\u3059\u308B\u3002"
+    effectType: 2
+    effectAmount: 2
+    effectDuration: 10
+  - id: stone_stop_charm
+    displayName: "\u6295\u77F3\u6B62\u3081\u306E\u304A\u5B88\u308A"
     price: 70
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-  - id: item_08
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E008"
-    price: 80
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-  - id: item_09
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E009"
-    price: 90
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-  - id: item_10
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E010"
-    price: 100
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-  - id: item_11
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E011"
-    price: 110
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-  - id: item_12
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E012"
-    price: 120
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-  - id: item_13
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E013"
-    price: 130
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-  - id: item_14
-    displayName: "\u4EEE\u30A2\u30A4\u30C6\u30E014"
-    price: 140
-    description: "\u4EEE\u306E\u6D88\u8CBB\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
+    description: "Shift\u30AD\u30FC\u3067\u4F7F\u7528\u300210\u79D2\u9593\u3001\u3059\u3079\u3066\u306E\u6295\u77F3\u3092\u505C\u6B62\u3059\u308B\u3002"
+    effectType: 3
+    effectAmount: 0
+    effectDuration: 10

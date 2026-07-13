@@ -76,6 +76,19 @@ MonoBehaviour:
   lastStoreY: 70
   leftStoreX: -2
   rightStoreX: 4
+  productAssignments:
+  - shopIndex: 2
+    itemId: king_medicine
+  - shopIndex: 5
+    itemId: large_umbrella_potion
+  - shopIndex: 6
+    itemId: stone_stop_charm
+  - shopIndex: 9
+    itemId: king_medicine
+  - shopIndex: 10
+    itemId: large_umbrella_potion
+  - shopIndex: 13
+    itemId: stone_stop_charm
 --- !u!212 &706695715068655700
 SpriteRenderer:
   serializedVersion: 3

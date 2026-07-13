@@ -171,6 +171,7 @@ GameObject:
   - component: {fileID: 296420927674031105}
   - component: {fileID: 771204986300100002}
   - component: {fileID: 771204986300100003}
+  - component: {fileID: 771204986300100004}
   m_Layer: 0
   m_Name: follower_0
   m_TagString: Untagged
@@ -297,6 +298,7 @@ MonoBehaviour:
   rightHitbox: {fileID: 1942096711964781411}
   wallet: {fileID: 771204986300100003}
   inventory: {fileID: 771204986300100002}
+  itemEffectController: {fileID: 771204986300100004}
 --- !u!212 &5915405083857385658
 SpriteRenderer:
   serializedVersion: 3
@@ -456,6 +458,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerWallet
   initialMoney: 100
+--- !u!114 &771204986300100004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7276443828844440585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f1665465e42444c9b1fd58d92d4447d, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerItemEffectController
+  inventory: {fileID: 771204986300100002}
+  umbrellaVisual: {fileID: 2267881739228513918}
+  shadowVisual: {fileID: 4158776554672432778}
+  leftUmbrellaHitbox: {fileID: 5412434879067278852}
+  rightUmbrellaHitbox: {fileID: 1942096711964781411}
+  kingHealth: {fileID: 0}
+  projectileManager: {fileID: 0}
 --- !u!1001 &740126483977493527
 PrefabInstance:
   m_ObjectHideFlags: 0

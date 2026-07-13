@@ -1,7 +1,30 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
+
+[Serializable]
+public sealed class ShopProductAssignment
+{
+    [SerializeField, Min(0)] private int shopIndex;
+    [SerializeField] private string itemId = string.Empty;
+
+    public int ShopIndex => shopIndex;
+    public string ItemId => itemId;
+}
 
 public class ShopManager : MonoBehaviour
 {
+    private const int ExpectedShopCount = 14;
+    private const int ExpectedSalesShopCount = 6;
+
+    private static readonly ItemEffectType[] RequiredEffectTypes =
+    {
+        ItemEffectType.HealKing,
+        ItemEffectType.ExpandUmbrella,
+        ItemEffectType.StopProjectiles
+    };
+
     [SerializeField] private GameObject shopPrefab;
     [SerializeField] private ItemCatalog itemCatalog;
     [Tooltip("店舗を生成し始める、このオブジェクトの初期位置からの距離")]
@@ -12,6 +35,8 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private float lastStoreY = 70f;
     [SerializeField] private float leftStoreX = -2f;
     [SerializeField] private float rightStoreX = 4f;
+    [Tooltip("0始まりの店舗番号と商品ID。未登録の店舗は空店舗になる")]
+    [SerializeField] private List<ShopProductAssignment> productAssignments = new();
 
     private float firstStoreY;
 
@@ -33,12 +58,19 @@ public class ShopManager : MonoBehaviour
             return;
         }
 
-        int itemIndex = 0;
+        Dictionary<int, ItemDefinition> productsByShop = BuildProductLookup();
+        int shopIndex = 0;
 
         for (float storeY = firstStoreY; storeY <= lastStoreY; storeY += storeInterval)
         {
-            SpawnShop(new Vector2(leftStoreX - 2f, storeY), itemCatalog.Items[itemIndex++]);
-            SpawnShop(new Vector2(rightStoreX + 2f, storeY), itemCatalog.Items[itemIndex++]);
+            productsByShop.TryGetValue(shopIndex, out ItemDefinition leftProduct);
+            SpawnShop(new Vector2(leftStoreX - 2f, storeY), leftProduct, shopIndex);
+            shopIndex++;
+
+            productsByShop.TryGetValue(shopIndex, out ItemDefinition rightProduct);
+            SpawnShop(new Vector2(rightStoreX + 2f, storeY), rightProduct, shopIndex);
+            shopIndex++;
+
             StoreRowCount++;
         }
     }
@@ -74,46 +106,150 @@ public class ShopManager : MonoBehaviour
 
     private bool ValidateShopSetup(int requiredShopCount)
     {
+        StringBuilder errors = new();
+
         if (shopPrefab == null)
         {
-            Debug.LogError("ShopManager requires a shop prefab.", this);
-            return false;
+            AppendError(errors, "ShopManager requires a shop prefab.");
+        }
+        else if (shopPrefab.GetComponent<Shop>() == null)
+        {
+            AppendError(errors, "The shop prefab requires a Shop component.");
         }
 
-        if (shopPrefab.GetComponent<Shop>() == null)
+        if (requiredShopCount != ExpectedShopCount)
         {
-            Debug.LogError("The shop prefab requires a Shop component.", shopPrefab);
-            return false;
+            AppendError(
+                errors,
+                $"ShopManager must generate {ExpectedShopCount} shops, but its position settings generate {requiredShopCount}.");
         }
 
         if (itemCatalog == null)
         {
-            Debug.LogError("ShopManager requires an item catalog.", this);
-            return false;
+            AppendError(errors, "ShopManager requires an item catalog.");
         }
-
-        if (!itemCatalog.Validate(out string validationError))
+        else
         {
-            Debug.LogError($"Item catalog is invalid:\n{validationError}", itemCatalog);
-            return false;
+            if (!itemCatalog.Validate(out string validationError))
+            {
+                AppendError(errors, $"Item catalog is invalid:\n{validationError}");
+            }
+
+            foreach (ItemEffectType effectType in RequiredEffectTypes)
+            {
+                if (!itemCatalog.HasEffectType(effectType))
+                {
+                    AppendError(errors, $"Item catalog is missing required effect type '{effectType}'.");
+                }
+            }
+
+            ValidateProductAssignments(requiredShopCount, errors);
         }
 
-        if (itemCatalog.Count < requiredShopCount)
+        if (errors.Length == 0)
         {
-            Debug.LogError(
-                $"Item catalog needs at least {requiredShopCount} unique items, but contains {itemCatalog.Count}.",
-                itemCatalog);
-            return false;
+            return true;
         }
 
-        return true;
+        Debug.LogError($"Shop setup is invalid:\n{errors}", this);
+        return false;
     }
 
-    private void SpawnShop(Vector2 position, ItemDefinition item)
+    private void ValidateProductAssignments(int shopCount, StringBuilder errors)
+    {
+        if (productAssignments == null)
+        {
+            AppendError(errors, "Shop product assignments are missing.");
+            return;
+        }
+
+        HashSet<int> assignedShopIndices = new();
+        Dictionary<ItemEffectType, int> assignmentCounts = new();
+        int validAssignmentCount = 0;
+
+        for (int index = 0; index < productAssignments.Count; index++)
+        {
+            ShopProductAssignment assignment = productAssignments[index];
+            if (assignment == null)
+            {
+                AppendError(errors, $"Product assignment at index {index} is missing.");
+                continue;
+            }
+
+            if (assignment.ShopIndex < 0 || assignment.ShopIndex >= shopCount)
+            {
+                AppendError(
+                    errors,
+                    $"Product assignment {index} uses shop index {assignment.ShopIndex}, outside 0-{shopCount - 1}.");
+                continue;
+            }
+
+            if (!assignedShopIndices.Add(assignment.ShopIndex))
+            {
+                AppendError(errors, $"Shop index {assignment.ShopIndex} has more than one product.");
+                continue;
+            }
+
+            if (!itemCatalog.TryGetById(assignment.ItemId, out ItemDefinition item))
+            {
+                AppendError(errors, $"Product assignment {index} has unknown item ID '{assignment.ItemId}'.");
+                continue;
+            }
+
+            assignmentCounts.TryGetValue(item.EffectType, out int count);
+            assignmentCounts[item.EffectType] = count + 1;
+            validAssignmentCount++;
+        }
+
+        if (validAssignmentCount != ExpectedSalesShopCount)
+        {
+            AppendError(
+                errors,
+                $"Exactly {ExpectedSalesShopCount} shops need products, but {validAssignmentCount} valid assignments were found.");
+        }
+
+        foreach (ItemEffectType effectType in RequiredEffectTypes)
+        {
+            assignmentCounts.TryGetValue(effectType, out int count);
+            if (count != 2)
+            {
+                AppendError(errors, $"Effect type '{effectType}' must be sold by exactly 2 shops, but is assigned to {count}.");
+            }
+        }
+    }
+
+    private Dictionary<int, ItemDefinition> BuildProductLookup()
+    {
+        Dictionary<int, ItemDefinition> productsByShop = new();
+        foreach (ShopProductAssignment assignment in productAssignments)
+        {
+            if (assignment != null
+                && itemCatalog.TryGetById(assignment.ItemId, out ItemDefinition item))
+            {
+                productsByShop[assignment.ShopIndex] = item;
+            }
+        }
+
+        return productsByShop;
+    }
+
+    private void SpawnShop(Vector2 position, ItemDefinition item, int shopIndex)
     {
         GameObject shopObject = Instantiate(shopPrefab, position, Quaternion.identity);
         Shop shop = shopObject.GetComponent<Shop>();
         shop.Initialize(item);
-        shopObject.name = $"shop_{item.Id}";
+
+        string productName = item != null ? item.Id : "empty";
+        shopObject.name = $"shop_{shopIndex + 1:00}_{productName}";
+    }
+
+    private static void AppendError(StringBuilder errors, string error)
+    {
+        if (errors.Length > 0)
+        {
+            errors.AppendLine();
+        }
+
+        errors.Append(error);
     }
 }
