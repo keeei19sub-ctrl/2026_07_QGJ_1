@@ -24,6 +24,13 @@ public class PlayerController : MonoBehaviour
 
     public bool IsUmbrellaSwinging => parasolDirection != 0;
 
+    public bool IsUmbrellaHitbox(Collider2D hitbox)
+    {
+        return hitbox != null &&
+            ((hitbox == leftHitbox && leftHitbox.enabled) ||
+             (hitbox == rightHitbox && rightHitbox.enabled));
+    }
+
     [SerializeField] private Collider2D leftHitbox;
     [SerializeField] private Collider2D rightHitbox;
     [SerializeField] private PlayerWallet wallet;

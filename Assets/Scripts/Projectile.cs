@@ -6,7 +6,7 @@ public class Projectile : MonoBehaviour
 {
     public event Action<Projectile> Destroyed;
 
-    [SerializeField] private int damage = 1000;
+    [SerializeField] private int damage = 100;
     [SerializeField, Min(0f)] private float speed = 5f;
     [SerializeField, Min(0f)] private float maxTravelDistance = 100f;
 
@@ -52,16 +52,20 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        PlayerController playerController = collision.GetComponentInParent<PlayerController>();
+        if (playerController != null && playerController.IsUmbrellaHitbox(collision))
+        {
+            Debug.Log("Defence");
+            DestroyProjectile();
+            return;
+        }
+
         KingHealth kingHealth = collision.GetComponent<KingHealth>();
         if (kingHealth == null)
         {
-            if (collision.GetComponentInParent<parasol>() != null)
-            {
-                DestroyProjectile();
-                Debug.Log("Defence");
-            }
             return;
         }
+
         Debug.Log("Damage");
         kingHealth.Damage(damage);
         DestroyProjectile();
