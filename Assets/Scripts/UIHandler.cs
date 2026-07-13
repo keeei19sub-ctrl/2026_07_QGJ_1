@@ -56,6 +56,7 @@ public class UIHandler : MonoBehaviour
         m_SelectedItemPicture = root.Q<VisualElement>("ItemPicture");
 
         SetHealthValue(1.0f);
+        SetProgressValue(0.0f);
         HideShop();
         RefreshPlayerUI();
     }
@@ -171,7 +172,7 @@ public class UIHandler : MonoBehaviour
     {
         if (m_Progressbar != null)
         {
-            m_Progressbar.style.width = Length.Percent(100 * Mathf.Clamp01(percentage));
+            m_Progressbar.style.height = Length.Percent(100 * Mathf.Clamp01(percentage));
         }
     }
 
