@@ -14,8 +14,8 @@ public class KingSun : MonoBehaviour
     [Tooltip("王様の影判定を反映する Umbrella Prefab の Animator")]
     [SerializeField] private Animator umbrellaAnimator;
  
-    // 現在、対象タグのコリジョンに接触中かどうか
-    private bool isColliding = false;
+    // 現在、影によって太陽ダメージを防げているかどうか
+    private bool isProtectedFromSun = false;
  
     // 接触中のコライダーを個別に管理する場合のカウント
     // (複数の対象と同時接触してもExit判定がズレないようにするため)
@@ -24,16 +24,18 @@ public class KingSun : MonoBehaviour
     private float timer = 0f;
 
     KingHealth kingHealth;
+    PlayerController playerController;
+
     void Start()
     {
         kingHealth = GetComponent<KingHealth>();
+        playerController = FindAnyObjectByType<PlayerController>();
 
         if (umbrellaAnimator == null)
         {
-            PlayerController player = FindAnyObjectByType<PlayerController>();
-            if (player != null)
+            if (playerController != null)
             {
-                umbrellaAnimator = player.GetComponentInChildren<Animator>();
+                umbrellaAnimator = playerController.GetComponentInChildren<Animator>();
             }
         }
 
@@ -41,8 +43,11 @@ public class KingSun : MonoBehaviour
     }
     private void Update()
     {
-        // 当たっていない時だけ処理する
-        if (!isColliding)
+        // 傘を左右に振っている間も状態が変わるため毎フレーム更新する
+        UpdateShadowState();
+
+        // 太陽から守られていない時だけ処理する
+        if (!isProtectedFromSun)
         {
             if (processInterval <= 0f)
             {
@@ -154,12 +159,17 @@ public class KingSun : MonoBehaviour
 
     private void UpdateShadowState()
     {
-        isColliding = collidingCount > 0;
-        KingHealth.shadow = isColliding;
+        bool isInsideShadow = collidingCount > 0;
+        bool isUmbrellaSwinging = playerController != null
+            && playerController.IsUmbrellaSwinging;
+
+        isProtectedFromSun = isInsideShadow && !isUmbrellaSwinging;
+        KingHealth.shadow = isProtectedFromSun;
 
         if (umbrellaAnimator != null)
         {
-            umbrellaAnimator.SetBool("Close", isColliding);
+            // 左右振り中も影の内外自体は変えず、解除後の遷移先を安定させる
+            umbrellaAnimator.SetBool("Close", isInsideShadow);
         }
     }
 }

@@ -127,15 +127,6 @@ public sealed class PlayerInventory : MonoBehaviour
         return index >= 0 ? itemCounts[index] : 0;
     }
 
-    public bool SelectPrevious()
-    {
-        return SelectInDirection(-1);
-    }
-
-    public bool SelectNext()
-    {
-        return SelectInDirection(1);
-    }
 
     public bool TryConsumeSelected()
     {

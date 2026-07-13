@@ -9,14 +9,6 @@ public class PlayerController : MonoBehaviour
         "Buy Item",
         InputActionType.Button,
         "<Keyboard>/space");
-    public InputAction SelectPreviousItem = new InputAction(
-        "Select Previous Item",
-        InputActionType.Button,
-        "<Keyboard>/leftArrow");
-    public InputAction SelectNextItem = new InputAction(
-        "Select Next Item",
-        InputActionType.Button,
-        "<Keyboard>/rightArrow");
     public InputAction ConsumeItem = new InputAction(
         "Consume Item",
         InputActionType.Button,
@@ -30,10 +22,14 @@ public class PlayerController : MonoBehaviour
     float maxCordinateXMinus = -2.7f;
     int parasolDirection = 0;
 
+    public bool IsUmbrellaSwinging => parasolDirection != 0;
+
     [SerializeField] private Collider2D leftHitbox;
     [SerializeField] private Collider2D rightHitbox;
     [SerializeField] private PlayerWallet wallet;
     [SerializeField] private PlayerInventory inventory;
+
+    Animator m_umbrella;
 
     private Shop currentShop;
 
@@ -44,8 +40,6 @@ public class PlayerController : MonoBehaviour
         inventory = inventory != null ? inventory : GetComponent<PlayerInventory>();
 
         EnsureButtonAction(ref BuyItem, "Buy Item", "<Keyboard>/space");
-        EnsureButtonAction(ref SelectPreviousItem, "Select Previous Item", "<Keyboard>/leftArrow");
-        EnsureButtonAction(ref SelectNextItem, "Select Next Item", "<Keyboard>/rightArrow");
         EnsureButtonAction(ref ConsumeItem, "Consume Item", "<Keyboard>/e");
     }
 
@@ -53,22 +47,19 @@ public class PlayerController : MonoBehaviour
     {
         MoveAction?.Enable();
         BuyItem?.Enable();
-        SelectPreviousItem?.Enable();
-        SelectNextItem?.Enable();
         ConsumeItem?.Enable();
     }
 
     private void Start()
     {
         UIHandler.instance?.BindPlayer(wallet, inventory);
+        this.m_umbrella = GetComponentInChildren<Animator>();
     }
 
     private void OnDisable()
     {
         MoveAction?.Disable();
         BuyItem?.Disable();
-        SelectPreviousItem?.Disable();
-        SelectNextItem?.Disable();
         ConsumeItem?.Disable();
 
         currentShop = null;
@@ -117,21 +108,16 @@ public class PlayerController : MonoBehaviour
     }
     void parasolChange()
     {
-        // 一旦両方消す
-        leftHitbox.enabled = false;
-        rightHitbox.enabled = false;
+        bool isSwingingLeft = parasolDirection < 0;
+        bool isSwingingRight = parasolDirection > 0;
 
-        switch (parasolDirection)
+        leftHitbox.enabled = isSwingingLeft;
+        rightHitbox.enabled = isSwingingRight;
+
+        if (m_umbrella != null)
         {
-            case -1:
-                leftHitbox.enabled = true;
-                break;
-            case 1:
-                rightHitbox.enabled = true;
-                break;
-            case 0:
-                // どちらも無効のまま
-                break;
+            m_umbrella.SetBool("Left", isSwingingLeft);
+            m_umbrella.SetBool("Right", isSwingingRight);
         }
     }
 
@@ -183,17 +169,6 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-
-        if (SelectPreviousItem.WasPressedThisFrame())
-        {
-            inventory.SelectPrevious();
-        }
-
-        if (SelectNextItem.WasPressedThisFrame())
-        {
-            inventory.SelectNext();
-        }
-
         if (ConsumeItem.WasPressedThisFrame())
         {
             inventory.TryConsumeSelected();
