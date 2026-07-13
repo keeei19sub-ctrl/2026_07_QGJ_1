@@ -3,8 +3,13 @@ using UnityEngine.UIElements;
 
 public class UIHandler : MonoBehaviour
 {
+    private const float KingIndicatorWidthPercent = 5f;
+    private const float KingIndicatorEdgePaddingPercent = 1f;
+
     private VisualElement m_Healthbar;
     private VisualElement m_Progressbar;
+    private VisualElement m_KingAboveIndicator;
+    private VisualElement m_KingBelowIndicator;
     private VisualElement m_ShopUI;
     private Label m_MoneyLabel;
     private Label m_SelectedItemLabel;
@@ -44,6 +49,8 @@ public class UIHandler : MonoBehaviour
         VisualElement root = uiDocument.rootVisualElement;
         m_Healthbar = root.Q<VisualElement>("HealthBar");
         m_Progressbar = root.Q<VisualElement>("ProgressBar");
+        m_KingAboveIndicator = root.Q<VisualElement>("KingAboveIndicator");
+        m_KingBelowIndicator = root.Q<VisualElement>("KingBelowIndicator");
 
         m_ShopUI = root.Q<VisualElement>("ShopUI");
         m_MoneyLabel = root.Q<Label>("MoneyLabel");
@@ -57,6 +64,7 @@ public class UIHandler : MonoBehaviour
 
         SetHealthValue(1.0f);
         SetProgressValue(0.0f);
+        HideKingIndicator();
         HideShop();
         RefreshPlayerUI();
     }
@@ -179,6 +187,24 @@ public class UIHandler : MonoBehaviour
         }
     }
 
+    public void ShowKingIndicator(KingIndicatorDirection direction, float viewportX)
+    {
+        float leftPercent = Mathf.Clamp(
+            Mathf.Clamp01(viewportX) * 100f - KingIndicatorWidthPercent * 0.5f,
+            KingIndicatorEdgePaddingPercent,
+            100f - KingIndicatorWidthPercent - KingIndicatorEdgePaddingPercent);
+
+        bool showAbove = direction == KingIndicatorDirection.Above;
+        SetIndicatorVisible(m_KingAboveIndicator, showAbove, leftPercent);
+        SetIndicatorVisible(m_KingBelowIndicator, !showAbove, leftPercent);
+    }
+
+    public void HideKingIndicator()
+    {
+        SetIndicatorVisible(m_KingAboveIndicator, false, 0f);
+        SetIndicatorVisible(m_KingBelowIndicator, false, 0f);
+    }
+
     private void SubscribeToPlayerEvents()
     {
         if (m_PlayerEventsSubscribed)
@@ -283,4 +309,25 @@ public class UIHandler : MonoBehaviour
             label.text = text;
         }
     }
+
+    private static void SetIndicatorVisible(VisualElement indicator, bool visible, float leftPercent)
+    {
+        if (indicator == null)
+        {
+            return;
+        }
+
+        if (visible)
+        {
+            indicator.style.left = Length.Percent(leftPercent);
+        }
+
+        indicator.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+    }
+}
+
+public enum KingIndicatorDirection
+{
+    Above,
+    Below
 }
