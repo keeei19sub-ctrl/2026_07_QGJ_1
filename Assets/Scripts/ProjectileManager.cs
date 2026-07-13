@@ -160,7 +160,7 @@ public class ProjectileManager : MonoBehaviour
 
     private void DespawnAllProjectiles()
     {
-        Projectile[] projectiles = FindObjectsByType<Projectile>(FindObjectsSortMode.None);
+        Projectile[] projectiles = FindObjectsByType<Projectile>();
         foreach (Projectile projectile in projectiles)
         {
             if (projectile != null)

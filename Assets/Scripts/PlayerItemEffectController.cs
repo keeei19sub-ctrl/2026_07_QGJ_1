@@ -31,7 +31,6 @@ public sealed class PlayerItemEffectController : MonoBehaviour
     private void Awake()
     {
         ResolvePlayerReferences();
-        CaptureUmbrellaBaseState();
     }
 
     public bool TryUseSelectedItem()
@@ -90,10 +89,18 @@ public sealed class PlayerItemEffectController : MonoBehaviour
     {
         ResolvePlayerReferences();
         if (multiplier <= 1f
-            || duration <= 0f
-            || !CaptureUmbrellaBaseState())
+            || duration <= 0f)
         {
             return false;
+        }
+
+        if (!umbrellaExpanded)
+        {
+            umbrellaBaseStateCaptured = false;
+            if (!CaptureUmbrellaBaseState())
+            {
+                return false;
+            }
         }
 
         ApplyUmbrellaScale(multiplier);
@@ -203,6 +210,7 @@ public sealed class PlayerItemEffectController : MonoBehaviour
         rightHitboxBaseState.Restore();
         shadowColliderBaseState.Restore();
         umbrellaExpanded = false;
+        umbrellaBaseStateCaptured = false;
     }
 
     private void OnDisable()
@@ -219,15 +227,11 @@ public sealed class PlayerItemEffectController : MonoBehaviour
     private readonly struct TransformState
     {
         private readonly Transform target;
-        private readonly Vector3 localPosition;
-        private readonly Quaternion localRotation;
         private readonly Vector3 localScale;
 
         public TransformState(Transform target)
         {
             this.target = target;
-            localPosition = target.localPosition;
-            localRotation = target.localRotation;
             localScale = target.localScale;
         }
 
@@ -246,8 +250,6 @@ public sealed class PlayerItemEffectController : MonoBehaviour
                 return;
             }
 
-            target.localPosition = localPosition;
-            target.localRotation = localRotation;
             target.localScale = localScale;
         }
     }
