@@ -9,6 +9,10 @@ public class KingSun : MonoBehaviour
     [Header("動作設定")]
     [Tooltip("接触していない間に呼びたい処理の実行間隔(秒)。0なら毎フレーム")]
     [SerializeField] private float processInterval = 10f;
+
+    [Header("傘のアニメーション")]
+    [Tooltip("王様の影判定を反映する Umbrella Prefab の Animator")]
+    [SerializeField] private Animator umbrellaAnimator;
  
     // 現在、対象タグのコリジョンに接触中かどうか
     private bool isColliding = false;
@@ -22,7 +26,18 @@ public class KingSun : MonoBehaviour
     KingHealth kingHealth;
     void Start()
     {
-        kingHealth = GetComponent<KingHealth>();  
+        kingHealth = GetComponent<KingHealth>();
+
+        if (umbrellaAnimator == null)
+        {
+            PlayerController player = FindAnyObjectByType<PlayerController>();
+            if (player != null)
+            {
+                umbrellaAnimator = player.GetComponentInChildren<Animator>();
+            }
+        }
+
+        UpdateShadowState();
     }
     private void Update()
     {
@@ -106,7 +121,7 @@ public class KingSun : MonoBehaviour
         if (other.CompareTag(targetTag))
         {
             collidingCount++;
-            isColliding = collidingCount > 0;
+            UpdateShadowState();
         }
     }
 
@@ -115,7 +130,7 @@ public class KingSun : MonoBehaviour
         if (other.CompareTag(targetTag))
         {
             collidingCount++;
-            isColliding = collidingCount > 0;
+            UpdateShadowState();
         }
     }
 
@@ -124,7 +139,7 @@ public class KingSun : MonoBehaviour
         if (other.CompareTag(targetTag))
         {
             collidingCount = Mathf.Max(0, collidingCount - 1);
-            isColliding = collidingCount > 0;
+            UpdateShadowState();
         }
     }
 
@@ -133,7 +148,18 @@ public class KingSun : MonoBehaviour
         if (other.CompareTag(targetTag))
         {
             collidingCount = Mathf.Max(0, collidingCount - 1);
-            isColliding = collidingCount > 0;
+            UpdateShadowState();
+        }
+    }
+
+    private void UpdateShadowState()
+    {
+        isColliding = collidingCount > 0;
+        KingHealth.shadow = isColliding;
+
+        if (umbrellaAnimator != null)
+        {
+            umbrellaAnimator.SetBool("Close", isColliding);
         }
     }
 }
