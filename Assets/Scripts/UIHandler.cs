@@ -146,6 +146,9 @@ public class UIHandler : MonoBehaviour
             case PurchaseResult.InsufficientFunds:
                 message = "お金が足りません";
                 break;
+            case PurchaseResult.InventoryFull:
+                message = "アイテムは1個しか持てません";
+                break;
             case PurchaseResult.InvalidProduct:
                 message = "商品が設定されていません";
                 break;

@@ -4,6 +4,7 @@ public enum PurchaseResult
 {
     Success,
     InsufficientFunds,
+    InventoryFull,
     InvalidProduct,
     MissingPlayerState
 }
@@ -36,6 +37,12 @@ public sealed class Shop : MonoBehaviour
         {
             Debug.Log("invalidproduct");
             return PurchaseResult.InvalidProduct;
+        }
+
+        if (!inventory.CanAddItem(item))
+        {
+            Debug.Log("inventoryfull");
+            return PurchaseResult.InventoryFull;
         }
 
         if (!wallet.TrySpend(item.Price))
