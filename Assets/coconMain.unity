@@ -215,6 +215,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e9f502fe2c570b4aa7c9ae63e947511, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHandler
+  playerProgressTarget: {fileID: 1310131236}
+  kingProgressTarget: {fileID: 483057732}
+  progressStartY: 0
+  progressGoalY: 41
 --- !u!114 &438477599
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -5,9 +5,17 @@ public class UIHandler : MonoBehaviour
 {
     private const float KingIndicatorWidthPercent = 5f;
     private const float KingIndicatorEdgePaddingPercent = 1f;
+    private const float ProgressIconHeightPercent = 10f;
+
+    [Header("Progress Indicator")]
+    [SerializeField] private Transform playerProgressTarget;
+    [SerializeField] private Transform kingProgressTarget;
+    [SerializeField] private float progressStartY;
+    [SerializeField] private float progressGoalY = 41f;
 
     private VisualElement m_Healthbar;
-    private VisualElement m_Progressbar;
+    private VisualElement m_PlayerProgressIcon;
+    private VisualElement m_KingProgressIcon;
     private VisualElement m_KingAboveIndicator;
     private VisualElement m_KingBelowIndicator;
     private VisualElement m_ProjectileWarningLeft;
@@ -50,7 +58,8 @@ public class UIHandler : MonoBehaviour
 
         VisualElement root = uiDocument.rootVisualElement;
         m_Healthbar = root.Q<VisualElement>("HealthBar");
-        m_Progressbar = root.Q<VisualElement>("ProgressBar");
+        m_PlayerProgressIcon = root.Q<VisualElement>("PlayerProgressIcon");
+        m_KingProgressIcon = root.Q<VisualElement>("KingProgressIcon");
         m_KingAboveIndicator = root.Q<VisualElement>("KingAboveIndicator");
         m_KingBelowIndicator = root.Q<VisualElement>("KingBelowIndicator");
         m_ProjectileWarningLeft = root.Q<VisualElement>("ProjectileWarningLeft");
@@ -67,11 +76,17 @@ public class UIHandler : MonoBehaviour
         m_SelectedItemPicture = root.Q<VisualElement>("ItemPicture");
 
         SetHealthValue(1.0f);
-        SetProgressValue(0.0f);
+        SetPlayerProgressValue(0.0f);
+        SetKingProgressValue(0.0f);
         HideKingIndicator();
         HideProjectileWarning();
         HideShop();
         RefreshPlayerUI();
+    }
+
+    private void LateUpdate()
+    {
+        UpdateProgressIcons();
     }
 
     private void OnDisable()
@@ -184,12 +199,14 @@ public class UIHandler : MonoBehaviour
         }
     }
 
-    public void SetProgressValue(float percentage)
+    public void SetPlayerProgressValue(float percentage)
     {
-        if (m_Progressbar != null)
-        {
-            m_Progressbar.style.height = Length.Percent(100 * Mathf.Clamp01(percentage));
-        }
+        SetProgressIconPosition(m_PlayerProgressIcon, percentage);
+    }
+
+    public void SetKingProgressValue(float percentage)
+    {
+        SetProgressIconPosition(m_KingProgressIcon, percentage);
     }
 
     public void ShowKingIndicator(KingIndicatorDirection direction, float viewportX)
@@ -224,6 +241,32 @@ public class UIHandler : MonoBehaviour
     {
         SetElementVisible(m_ProjectileWarningLeft, false);
         SetElementVisible(m_ProjectileWarningRight, false);
+    }
+
+    private void UpdateProgressIcons()
+    {
+        if (Mathf.Approximately(progressStartY, progressGoalY))
+        {
+            SetPlayerProgressValue(0f);
+            SetKingProgressValue(0f);
+            return;
+        }
+
+        if (playerProgressTarget != null)
+        {
+            SetPlayerProgressValue(Mathf.InverseLerp(
+                progressStartY,
+                progressGoalY,
+                playerProgressTarget.position.y));
+        }
+
+        if (kingProgressTarget != null)
+        {
+            SetKingProgressValue(Mathf.InverseLerp(
+                progressStartY,
+                progressGoalY,
+                kingProgressTarget.position.y));
+        }
     }
 
     private void SubscribeToPlayerEvents()
@@ -352,6 +395,18 @@ public class UIHandler : MonoBehaviour
         {
             element.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
+    }
+
+    private static void SetProgressIconPosition(VisualElement icon, float percentage)
+    {
+        if (icon == null)
+        {
+            return;
+        }
+
+        float clampedPercentage = Mathf.Clamp01(percentage);
+        float topPercent = (1f - clampedPercentage) * (100f - ProgressIconHeightPercent);
+        icon.style.top = Length.Percent(topPercent);
     }
 }
 
