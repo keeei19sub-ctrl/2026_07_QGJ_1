@@ -1,4 +1,5 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="PauseUI.uss"/>
     <ui:Template name="ItemResultUI" src="project://database/Assets/UIs/ItemResultUI.uxml?fileID=9197481963319205126&amp;guid=c4bb234eb3109e84aa5122267e7307f0&amp;type=3#ItemResultUI"/>
     <ui:Template name="ItemUI" src="project://database/Assets/UIs/ItemUI.uxml?fileID=9197481963319205126&amp;guid=aaa4715adf7de514884038108a62fcf7&amp;type=3#ItemUI"/>
     <ui:Template name="ShopUI" src="project://database/Assets/UIs/ShopUI.uxml?fileID=9197481963319205126&amp;guid=a7402212833baa34d89048d8b0563019&amp;type=3#ShopUI"/>
@@ -20,4 +21,19 @@
     <ui:VisualElement name="KingBelowIndicator" picking-mode="Ignore" style="display: none; position: absolute; width: 5%; height: 9%; bottom: 1%; left: 47.5%; background-image: url(&quot;project://database/Assets/Sprites/Triangle.png?fileID=-3795437932344149621&amp;guid=8d1e9fe020184a44cafa6beb2f82bbe9&amp;type=3#Triangle_0&quot;); -unity-background-scale-mode: scale-to-fit; -unity-background-image-tint-color: rgb(255, 218, 56); rotate: 90deg;"/>
     <ui:VisualElement name="ProjectileWarningLeft" picking-mode="Ignore" style="display: none; position: absolute; width: 16%; height: 42%; left: 0%; top: 29%; background-image: url(&quot;project://database/Assets/Sprites/king.png?fileID=-1724822148711148119&amp;guid=7d975ffccd5d05f42a4336a46af1c4dc&amp;type=3#king_0&quot;); -unity-background-scale-mode: scale-to-fit; -unity-background-image-tint-color: rgb(255, 190, 190);"/>
     <ui:VisualElement name="ProjectileWarningRight" picking-mode="Ignore" style="display: none; position: absolute; width: 16%; height: 42%; right: 0%; top: 29%; background-image: url(&quot;project://database/Assets/Sprites/king.png?fileID=-1724822148711148119&amp;guid=7d975ffccd5d05f42a4336a46af1c4dc&amp;type=3#king_0&quot;); -unity-background-scale-mode: scale-to-fit; -unity-background-image-tint-color: rgb(255, 190, 190); scale: -1 1;"/>
+    <ui:VisualElement name="PauseOverlay" class="pause-overlay">
+        <ui:VisualElement class="pause-glow pause-glow--top" picking-mode="Ignore"/>
+        <ui:VisualElement class="pause-glow pause-glow--bottom" picking-mode="Ignore"/>
+        <ui:VisualElement class="pause-panel">
+            <ui:Label text="PAUSE" class="pause-eyebrow"/>
+            <ui:Label text="ひとやすみ" class="pause-title"/>
+            <ui:VisualElement class="pause-divider" picking-mode="Ignore"/>
+            <ui:VisualElement class="pause-actions">
+                <ui:Button text="ゲームにもどる" name="ResumeButton" class="pause-button pause-button--primary"/>
+                <ui:Button text="はじめからやりなおす" name="RestartButton" class="pause-button"/>
+                <ui:Button text="タイトルにもどる" name="TitleButton" class="pause-button pause-button--quiet"/>
+            </ui:VisualElement>
+            <ui:Label text="ESC でもゲームにもどれます" class="pause-hint"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
 </ui:UXML>

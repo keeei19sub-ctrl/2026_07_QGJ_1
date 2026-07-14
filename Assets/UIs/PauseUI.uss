@@ -1,0 +1,129 @@
+.pause-overlay {
+    display: none;
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(13, 17, 26, 0.82);
+}
+
+.pause-glow {
+    position: absolute;
+    width: 42%;
+    height: 42%;
+    border-radius: 50%;
+    background-color: rgba(255, 215, 111, 0.08);
+}
+
+.pause-glow--top {
+    left: -18%;
+    top: -23%;
+}
+
+.pause-glow--bottom {
+    right: -16%;
+    bottom: -26%;
+}
+
+.pause-panel {
+    width: 42%;
+    height: 64%;
+    min-width: 34%;
+    max-width: 54%;
+    padding-top: 5%;
+    padding-right: 5%;
+    padding-bottom: 4%;
+    padding-left: 5%;
+    align-items: center;
+    background-color: rgba(250, 244, 222, 0.98);
+    border-radius: 7%;
+}
+
+.pause-eyebrow {
+    width: 100%;
+    height: 9%;
+    color: rgb(165, 104, 42);
+    font-size: 30%;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    letter-spacing: 10%;
+}
+
+.pause-title {
+    width: 100%;
+    height: 17%;
+    color: rgb(42, 45, 51);
+    font-size: 52%;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.pause-divider {
+    width: 16%;
+    height: 1%;
+    margin-top: 1%;
+    margin-bottom: 4%;
+    background-color: rgb(217, 153, 75);
+    border-radius: 50%;
+}
+
+.pause-actions {
+    width: 100%;
+    height: 52%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pause-button {
+    width: 88%;
+    height: 27%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    padding-top: 0%;
+    padding-right: 6%;
+    padding-bottom: 0%;
+    padding-left: 6%;
+    color: rgb(54, 52, 45);
+    background-color: rgb(230, 221, 191);
+    border-radius: 18%;
+    font-size: 29%;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.pause-button:hover {
+    color: rgb(37, 34, 28);
+    background-color: rgb(240, 194, 105);
+}
+
+.pause-button:active {
+    background-color: rgb(212, 151, 65);
+    scale: 0.98 0.98;
+}
+
+.pause-button--primary {
+    color: rgb(255, 253, 244);
+    background-color: rgb(190, 116, 48);
+}
+
+.pause-button--primary:hover {
+    color: rgb(255, 255, 255);
+    background-color: rgb(214, 139, 57);
+}
+
+.pause-button--quiet {
+    color: rgb(95, 91, 79);
+    background-color: rgba(218, 210, 184, 0.72);
+}
+
+.pause-hint {
+    width: 100%;
+    height: 10%;
+    margin-top: 3%;
+    color: rgb(118, 111, 92);
+    font-size: 20%;
+    -unity-text-align: middle-center;
+}

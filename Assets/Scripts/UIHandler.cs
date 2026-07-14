@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class UIHandler : MonoBehaviour
@@ -29,11 +31,16 @@ public class UIHandler : MonoBehaviour
     private Label m_ShopItemNameLabel;
     private Label m_ShopPriceLabel;
     private Label m_ShopMessageLabel;
+    private VisualElement m_PauseOverlay;
+    private Button m_ResumeButton;
+    private Button m_RestartButton;
+    private Button m_TitleButton;
 
     private PlayerWallet m_Wallet;
     private PlayerInventory m_Inventory;
     private Shop m_VisibleShop;
     private bool m_PlayerEventsSubscribed;
+    private bool m_IsPaused;
 
     public static UIHandler instance { get; private set; }
 
@@ -74,6 +81,12 @@ public class UIHandler : MonoBehaviour
         m_SelectedItemCountLabel = root.Q<Label>("ItemCount");
         m_SelectedItemDescriptionLabel = root.Q<Label>("ItemDescription");
         m_SelectedItemPicture = root.Q<VisualElement>("ItemPicture");
+        m_PauseOverlay = root.Q<VisualElement>("PauseOverlay");
+        m_ResumeButton = root.Q<Button>("ResumeButton");
+        m_RestartButton = root.Q<Button>("RestartButton");
+        m_TitleButton = root.Q<Button>("TitleButton");
+
+        RegisterPauseCallbacks();
 
         SetHealthValue(1.0f);
         SetPlayerProgressValue(0.0f);
@@ -82,6 +95,15 @@ public class UIHandler : MonoBehaviour
         HideProjectileWarning();
         HideShop();
         RefreshPlayerUI();
+        SetPaused(false);
+    }
+
+    private void Update()
+    {
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            SetPaused(!m_IsPaused);
+        }
     }
 
     private void LateUpdate()
@@ -96,11 +118,91 @@ public class UIHandler : MonoBehaviour
 
     private void OnDestroy()
     {
+        UnregisterPauseCallbacks();
+        Time.timeScale = 1f;
+
         UnsubscribeFromPlayerEvents();
         if (instance == this)
         {
             instance = null;
         }
+    }
+
+    public void SetPaused(bool paused)
+    {
+        m_IsPaused = paused;
+        Time.timeScale = paused ? 0f : 1f;
+
+        if (m_PauseOverlay != null)
+        {
+            m_PauseOverlay.style.display = paused ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        if (paused)
+        {
+            m_ResumeButton?.Focus();
+        }
+    }
+
+    private void RegisterPauseCallbacks()
+    {
+        if (m_ResumeButton != null)
+        {
+            m_ResumeButton.clicked += ResumeGame;
+        }
+
+        if (m_RestartButton != null)
+        {
+            m_RestartButton.clicked += RestartScene;
+        }
+
+        if (m_TitleButton != null)
+        {
+            m_TitleButton.clicked += ReturnToTitle;
+        }
+    }
+
+    private void UnregisterPauseCallbacks()
+    {
+        if (m_ResumeButton != null)
+        {
+            m_ResumeButton.clicked -= ResumeGame;
+        }
+
+        if (m_RestartButton != null)
+        {
+            m_RestartButton.clicked -= RestartScene;
+        }
+
+        if (m_TitleButton != null)
+        {
+            m_TitleButton.clicked -= ReturnToTitle;
+        }
+    }
+
+    private void ResumeGame()
+    {
+        SetPaused(false);
+    }
+
+    private void RestartScene()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void ReturnToTitle()
+    {
+        Time.timeScale = 1f;
+
+        if (Application.CanStreamedLevelBeLoaded("title"))
+        {
+            SceneManager.LoadScene("title");
+            return;
+        }
+
+        Debug.LogWarning("The title scene is not included in Build Settings.", this);
+        SetPaused(false);
     }
 
     public void BindPlayer(PlayerWallet wallet, PlayerInventory inventory)
