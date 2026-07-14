@@ -4762,6 +4762,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1885919408}
   - component: {fileID: 1885919407}
+  - component: {fileID: 1885919409}
   m_Layer: 0
   m_Name: Follow2DCamera
   m_TagString: Untagged
@@ -4824,6 +4825,20 @@ Transform:
   - {fileID: 1761427071}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1885919409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1885919406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 839326a80dd4d8349bd8873c335ca44b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CinemachineLineLimit
+  _origin: {x: 1, y: 0, z: -10}
+  _direction: {x: 0, y: 1, z: 0}
 --- !u!1001 &2000839794
 PrefabInstance:
   m_ObjectHideFlags: 0
