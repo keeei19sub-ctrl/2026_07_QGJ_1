@@ -49,7 +49,7 @@ public class KingSun : MonoBehaviour
         UpdateShadowState();
 
         // 太陽から守られていない時だけ処理する
-        if (!isProtectedFromSun)
+        if (!isProtectedFromSun && Time.deltaTime != 0f)
         {
             if (processInterval <= 0f)
             {
