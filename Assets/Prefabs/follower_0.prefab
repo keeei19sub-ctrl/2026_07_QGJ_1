@@ -477,6 +477,14 @@ MonoBehaviour:
   rightUmbrellaHitbox: {fileID: 1942096711964781411}
   kingHealth: {fileID: 0}
   projectileManager: {fileID: 0}
+  healingItemSprite: {fileID: 7322885499304307244, guid: dff11f0a29175ad4ea8191928387d75a, type: 3}
+  playerHoldOffset: {x: 0, y: 2, z: 0}
+  kingTargetOffset: {x: 0, y: 2, z: 0}
+  healingItemHoldDuration: 0.6
+  healingItemTravelDuration: 0.8
+  healingItemArcHeight: 2
+  healingItemScale: 0.75
+  healingItemSortingOrder: 20
 --- !u!1001 &740126483977493527
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -18,6 +18,16 @@ public sealed class PlayerItemEffectController : MonoBehaviour
     [SerializeField] private KingHealth kingHealth;
     [SerializeField] private ProjectileManager projectileManager;
 
+    [Header("King Healing Delivery")]
+    [SerializeField] private Sprite healingItemSprite;
+    [SerializeField] private Vector3 playerHoldOffset = new Vector3(0f, 2f, 0f);
+    [SerializeField] private Vector3 kingTargetOffset = new Vector3(0f, 2f, 0f);
+    [SerializeField, Min(0f)] private float healingItemHoldDuration = 0.6f;
+    [SerializeField, Min(0.01f)] private float healingItemTravelDuration = 0.8f;
+    [SerializeField, Min(0f)] private float healingItemArcHeight = 2f;
+    [SerializeField, Min(0.01f)] private float healingItemScale = 0.75f;
+    [SerializeField] private int healingItemSortingOrder = 20;
+
     private TransformState umbrellaBaseState;
     private TransformState shadowBaseState;
     private BoxColliderState leftHitboxBaseState;
@@ -27,6 +37,8 @@ public sealed class PlayerItemEffectController : MonoBehaviour
     private bool umbrellaBaseStateCaptured;
     private bool umbrellaExpanded;
     private Coroutine umbrellaTimer;
+    private Coroutine healingDelivery;
+    private GameObject healingItemVisual;
 
     private void Awake()
     {
@@ -35,6 +47,11 @@ public sealed class PlayerItemEffectController : MonoBehaviour
 
     public bool TryUseSelectedItem()
     {
+        if (healingDelivery != null)
+        {
+            return false;
+        }
+
         if (inventory == null)
         {
             inventory = GetComponent<PlayerInventory>();
@@ -60,13 +77,7 @@ public sealed class PlayerItemEffectController : MonoBehaviour
         switch (item.EffectType)
         {
             case ItemEffectType.HealKing:
-                if (kingHealth == null)
-                {
-                    kingHealth = FindAnyObjectByType<KingHealth>();
-                }
-
-                return kingHealth != null
-                    && kingHealth.HealByMaxHealthFraction(item.EffectAmount);
+                return BeginHealingDelivery(item.EffectAmount);
 
             case ItemEffectType.ExpandUmbrella:
                 return ExpandUmbrella(item.EffectAmount, item.EffectDuration);
@@ -83,6 +94,101 @@ public sealed class PlayerItemEffectController : MonoBehaviour
             default:
                 return false;
         }
+    }
+
+    private bool BeginHealingDelivery(float maxHealthFraction)
+    {
+        if (maxHealthFraction <= 0f
+            || healingDelivery != null
+            || healingItemSprite == null)
+        {
+            return false;
+        }
+
+        if (kingHealth == null)
+        {
+            kingHealth = FindAnyObjectByType<KingHealth>();
+        }
+
+        if (kingHealth == null)
+        {
+            return false;
+        }
+
+        healingDelivery = StartCoroutine(DeliverHealingItem(maxHealthFraction));
+        return true;
+    }
+
+    private IEnumerator DeliverHealingItem(float maxHealthFraction)
+    {
+        healingItemVisual = new GameObject("Healing Item Visual");
+        GameObject spriteObject = new GameObject("Sprite");
+        spriteObject.transform.SetParent(healingItemVisual.transform, false);
+        spriteObject.transform.localPosition = -healingItemSprite.bounds.center;
+
+        SpriteRenderer spriteRenderer = spriteObject.AddComponent<SpriteRenderer>();
+        spriteRenderer.sprite = healingItemSprite;
+        spriteRenderer.sortingOrder = healingItemSortingOrder;
+        healingItemVisual.transform.localScale = Vector3.one * healingItemScale;
+
+        float holdElapsed = 0f;
+        while (holdElapsed < healingItemHoldDuration)
+        {
+            healingItemVisual.transform.position = transform.position + playerHoldOffset;
+            holdElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        Vector3 startPosition = transform.position + playerHoldOffset;
+        float travelElapsed = 0f;
+        float travelDuration = Mathf.Max(0.01f, healingItemTravelDuration);
+        while (travelElapsed < travelDuration && kingHealth != null)
+        {
+            float t = Mathf.Clamp01(travelElapsed / travelDuration);
+            Vector3 targetPosition = kingHealth.transform.position + kingTargetOffset;
+            Vector3 controlPosition = (startPosition + targetPosition) * 0.5f
+                + Vector3.up * healingItemArcHeight;
+            healingItemVisual.transform.position = CalculateQuadraticBezier(
+                startPosition,
+                controlPosition,
+                targetPosition,
+                t);
+
+            travelElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        if (kingHealth != null)
+        {
+            healingItemVisual.transform.position = kingHealth.transform.position + kingTargetOffset;
+            kingHealth.HealByMaxHealthFraction(maxHealthFraction);
+        }
+
+        DestroyHealingItemVisual();
+        healingDelivery = null;
+    }
+
+    private static Vector3 CalculateQuadraticBezier(
+        Vector3 start,
+        Vector3 control,
+        Vector3 end,
+        float t)
+    {
+        float inverseT = 1f - t;
+        return inverseT * inverseT * start
+            + 2f * inverseT * t * control
+            + t * t * end;
+    }
+
+    private void DestroyHealingItemVisual()
+    {
+        if (healingItemVisual == null)
+        {
+            return;
+        }
+
+        Destroy(healingItemVisual);
+        healingItemVisual = null;
     }
 
     private bool ExpandUmbrella(float multiplier, float duration)
@@ -215,6 +321,14 @@ public sealed class PlayerItemEffectController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (healingDelivery != null)
+        {
+            StopCoroutine(healingDelivery);
+            healingDelivery = null;
+        }
+
+        DestroyHealingItemVisual();
+
         if (umbrellaTimer != null)
         {
             StopCoroutine(umbrellaTimer);
