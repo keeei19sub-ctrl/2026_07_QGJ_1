@@ -34,7 +34,6 @@ public sealed class KingCoinRewardEmitter : MonoBehaviour
 
         if (kingSun == null || !kingSun.IsProtectedFromSun)
         {
-            protectionTimer = 0f;
             return;
         }
 
@@ -78,11 +77,6 @@ public sealed class KingCoinRewardEmitter : MonoBehaviour
     {
         coin.Removed -= OnCoinRemoved;
         activeCoins.Remove(coin);
-    }
-
-    private void OnDisable()
-    {
-        protectionTimer = 0f;
     }
 
     private void OnDestroy()
