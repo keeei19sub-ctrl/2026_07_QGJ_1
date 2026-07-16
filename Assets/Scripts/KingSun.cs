@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class KingSun : MonoBehaviour
@@ -18,6 +19,10 @@ public class KingSun : MonoBehaviour
  
     // 現在、影によって太陽ダメージを防げているかどうか
     private bool isProtectedFromSun = false;
+
+    public bool IsProtectedFromSun => isProtectedFromSun;
+
+    public event Action<bool> ProtectionChanged;
  
     // 接触中のコライダーを個別に管理する場合のカウント
     // (複数の対象と同時接触してもExit判定がズレないようにするため)
@@ -165,7 +170,9 @@ public class KingSun : MonoBehaviour
         bool isUmbrellaSwinging = playerController != null
             && playerController.IsUmbrellaSwinging;
 
-        isProtectedFromSun = isInsideShadow && !isUmbrellaSwinging;
+        bool nextProtectionState = isInsideShadow && !isUmbrellaSwinging;
+        bool protectionChanged = isProtectedFromSun != nextProtectionState;
+        isProtectedFromSun = nextProtectionState;
         KingHealth.shadow = isProtectedFromSun;
 
         if (umbrellaAnimator != null)
@@ -173,5 +180,22 @@ public class KingSun : MonoBehaviour
             // 左右振り中も影の内外自体は変えず、解除後の遷移先を安定させる
             umbrellaAnimator.SetBool(UmbrellaOpenParameter, isInsideShadow);
         }
+
+        if (protectionChanged)
+        {
+            ProtectionChanged?.Invoke(isProtectedFromSun);
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (!isProtectedFromSun)
+        {
+            return;
+        }
+
+        isProtectedFromSun = false;
+        KingHealth.shadow = false;
+        ProtectionChanged?.Invoke(false);
     }
 }

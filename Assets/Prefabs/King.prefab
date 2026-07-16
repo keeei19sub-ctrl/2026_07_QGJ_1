@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 2571356530258288596}
   - component: {fileID: 8250850828830303479}
   - component: {fileID: 3367033546887208737}
+  - component: {fileID: 7281442524727001842}
   m_Layer: 0
   m_Name: King
   m_TagString: Untagged
@@ -265,3 +266,22 @@ MonoBehaviour:
   kingController: {fileID: 1897852896941178719}
   shopManager: {fileID: 1052517264748581369}
   currentStoreNumber: 0
+--- !u!114 &7281442524727001842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7321076339299950448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86d75358e18140bdb2b5f144d36df1f6, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::KingCoinRewardEmitter
+  coinPrefab: {fileID: 11400000, guid: d876b7ee08c548dc84c4260460be287d, type: 3}
+  protectionDuration: 5
+  rewardAmount: 10
+  horizontalDistanceRange: {x: 1, y: 1.8}
+  downwardDistance: 0.5
+  flightDuration: 0.6
+  arcHeight: 1.2
