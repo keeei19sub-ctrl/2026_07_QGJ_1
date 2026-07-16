@@ -279,8 +279,10 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::KingCoinRewardEmitter
   coinPrefab: {fileID: 11400000, guid: d876b7ee08c548dc84c4260460be287d, type: 3}
-  protectionDuration: 5
+  spawnInterval: 2
   rewardAmount: 10
+  maxConcurrentCoins: 5
+  roadCenterX: 0.5
   horizontalDistanceRange: {x: 1, y: 1.8}
   downwardDistance: 0.5
   flightDuration: 0.6
