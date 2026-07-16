@@ -8,12 +8,25 @@ public class UIHandler : MonoBehaviour
     private const float KingIndicatorWidthPercent = 5f;
     private const float KingIndicatorEdgePaddingPercent = 1f;
     private const float ProgressIconHeightPercent = 10f;
+    private const float SpeechBubbleWidthPercent = 26f;
+    private const float SpeechBubbleHeightPercent = 19f;
+    private const float SpeechBubbleEdgePaddingPercent = 1f;
+    private const float SpeechBubbleGapPercent = 1f;
+    private const float MinimumSpeechDuration = 0.1f;
+    private const float DefaultSpeechDuration = 3f;
 
     [Header("Progress Indicator")]
     [SerializeField] private Transform playerProgressTarget;
     [SerializeField] private Transform kingProgressTarget;
     [SerializeField] private float progressStartY;
     [SerializeField] private float progressGoalY = 41f;
+
+    [Header("Speech Bubbles")]
+    [SerializeField] private Camera speechCamera;
+    [SerializeField] private Transform playerSpeechTarget;
+    [SerializeField] private SpriteRenderer playerSpeechRenderer;
+    [SerializeField] private Transform kingSpeechTarget;
+    [SerializeField] private SpriteRenderer kingSpeechRenderer;
 
     private VisualElement m_Healthbar;
     private VisualElement m_PlayerProgressIcon;
@@ -35,6 +48,8 @@ public class UIHandler : MonoBehaviour
     private Button m_ResumeButton;
     private Button m_RestartButton;
     private Button m_TitleButton;
+    private SpeechBubbleState m_PlayerSpeech;
+    private SpeechBubbleState m_KingSpeech;
 
     private PlayerWallet m_Wallet;
     private PlayerInventory m_Inventory;
@@ -85,6 +100,21 @@ public class UIHandler : MonoBehaviour
         m_ResumeButton = root.Q<Button>("ResumeButton");
         m_RestartButton = root.Q<Button>("RestartButton");
         m_TitleButton = root.Q<Button>("TitleButton");
+        m_PlayerSpeech = new SpeechBubbleState(
+            root.Q<VisualElement>("PlayerSpeechBubble"),
+            root.Q<Label>("PlayerSpeechLabel"),
+            playerSpeechTarget,
+            playerSpeechRenderer);
+        m_KingSpeech = new SpeechBubbleState(
+            root.Q<VisualElement>("KingSpeechBubble"),
+            root.Q<Label>("KingSpeechLabel"),
+            kingSpeechTarget,
+            kingSpeechRenderer);
+
+        if (speechCamera == null)
+        {
+            speechCamera = Camera.main;
+        }
 
         RegisterPauseCallbacks();
 
@@ -93,9 +123,14 @@ public class UIHandler : MonoBehaviour
         SetKingProgressValue(0.0f);
         HideKingIndicator();
         HideProjectileWarning();
+        HideSpeech(SpeechSpeaker.Player);
+        HideSpeech(SpeechSpeaker.King);
         HideShop();
         RefreshPlayerUI();
         SetPaused(false);
+
+        ShowSpeech(SpeechSpeaker.King, "出発じゃ！");
+        ShowSpeech(SpeechSpeaker.Player, "王様についていこう！");
     }
 
     private void Update()
@@ -104,11 +139,14 @@ public class UIHandler : MonoBehaviour
         {
             SetPaused(!m_IsPaused);
         }
+
+        UpdateSpeechTimers();
     }
 
     private void LateUpdate()
     {
         UpdateProgressIcons();
+        UpdateSpeechBubblePositions();
     }
 
     private void OnDisable()
@@ -345,6 +383,156 @@ public class UIHandler : MonoBehaviour
         SetElementVisible(m_ProjectileWarningRight, false);
     }
 
+    public void ShowSpeech(
+        SpeechSpeaker speaker,
+        string text,
+        float duration = DefaultSpeechDuration)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            HideSpeech(speaker);
+            return;
+        }
+
+        SpeechBubbleState state = GetSpeechState(speaker);
+        if (!CanShowSpeech(speaker, state))
+        {
+            return;
+        }
+
+        state.Label.text = text;
+        state.RemainingTime = Mathf.Max(MinimumSpeechDuration, duration);
+        state.IsActive = true;
+        UpdateSpeechBubblePosition(state);
+    }
+
+    public void HideSpeech(SpeechSpeaker speaker)
+    {
+        SpeechBubbleState state = GetSpeechState(speaker);
+        if (state == null)
+        {
+            return;
+        }
+
+        state.IsActive = false;
+        state.RemainingTime = 0f;
+        SetElementVisible(state.Bubble, false);
+    }
+
+    private void UpdateSpeechTimers()
+    {
+        UpdateSpeechTimer(SpeechSpeaker.Player, m_PlayerSpeech);
+        UpdateSpeechTimer(SpeechSpeaker.King, m_KingSpeech);
+    }
+
+    private void UpdateSpeechTimer(SpeechSpeaker speaker, SpeechBubbleState state)
+    {
+        if (state == null || !state.IsActive)
+        {
+            return;
+        }
+
+        state.RemainingTime -= Time.deltaTime;
+        if (state.RemainingTime <= 0f)
+        {
+            HideSpeech(speaker);
+        }
+    }
+
+    private void UpdateSpeechBubblePositions()
+    {
+        UpdateSpeechBubblePosition(m_PlayerSpeech);
+        UpdateSpeechBubblePosition(m_KingSpeech);
+    }
+
+    private void UpdateSpeechBubblePosition(SpeechBubbleState state)
+    {
+        if (state == null || !state.IsActive || state.Bubble == null)
+        {
+            return;
+        }
+
+        if (speechCamera == null || state.Target == null || state.Renderer == null)
+        {
+            SetElementVisible(state.Bubble, false);
+            return;
+        }
+
+        Bounds bounds = state.Renderer.bounds;
+        Vector3 viewportMin = speechCamera.WorldToViewportPoint(bounds.min);
+        Vector3 viewportMax = speechCamera.WorldToViewportPoint(bounds.max);
+        bool isInFrontOfCamera = viewportMin.z > 0f && viewportMax.z > 0f;
+        bool overlapsViewport = viewportMax.x >= 0f && viewportMin.x <= 1f
+            && viewportMax.y >= 0f && viewportMin.y <= 1f;
+
+        if (!isInFrontOfCamera || !overlapsViewport)
+        {
+            SetElementVisible(state.Bubble, false);
+            return;
+        }
+
+        Vector3 anchorWorldPosition = new Vector3(
+            state.Target.position.x,
+            bounds.max.y,
+            state.Target.position.z);
+        Vector3 anchorViewportPosition = speechCamera.WorldToViewportPoint(anchorWorldPosition);
+        float leftPercent = Mathf.Clamp(
+            anchorViewportPosition.x * 100f - SpeechBubbleWidthPercent * 0.5f,
+            SpeechBubbleEdgePaddingPercent,
+            100f - SpeechBubbleWidthPercent - SpeechBubbleEdgePaddingPercent);
+        float topPercent = Mathf.Clamp(
+            (1f - anchorViewportPosition.y) * 100f
+                - SpeechBubbleHeightPercent
+                - SpeechBubbleGapPercent,
+            SpeechBubbleEdgePaddingPercent,
+            100f - SpeechBubbleHeightPercent - SpeechBubbleEdgePaddingPercent);
+
+        state.Bubble.style.left = Length.Percent(leftPercent);
+        state.Bubble.style.top = Length.Percent(topPercent);
+        SetElementVisible(state.Bubble, true);
+    }
+
+    private SpeechBubbleState GetSpeechState(SpeechSpeaker speaker)
+    {
+        switch (speaker)
+        {
+            case SpeechSpeaker.Player:
+                return m_PlayerSpeech;
+            case SpeechSpeaker.King:
+                return m_KingSpeech;
+            default:
+                Debug.LogWarning($"Unsupported speech speaker: {speaker}.", this);
+                return null;
+        }
+    }
+
+    private bool CanShowSpeech(SpeechSpeaker speaker, SpeechBubbleState state)
+    {
+        if (state != null
+            && state.Bubble != null
+            && state.Label != null
+            && state.Target != null
+            && state.Renderer != null
+            && speechCamera != null)
+        {
+            return true;
+        }
+
+        if (state == null || !state.SetupWarningLogged)
+        {
+            Debug.LogWarning(
+                $"Speech bubble setup is incomplete for {speaker}; the line was ignored.",
+                this);
+
+            if (state != null)
+            {
+                state.SetupWarningLogged = true;
+            }
+        }
+
+        return false;
+    }
+
     private void UpdateProgressIcons()
     {
         if (Mathf.Approximately(progressStartY, progressGoalY))
@@ -510,6 +698,35 @@ public class UIHandler : MonoBehaviour
         float topPercent = (1f - clampedPercentage) * (100f - ProgressIconHeightPercent);
         icon.style.top = Length.Percent(topPercent);
     }
+
+    private sealed class SpeechBubbleState
+    {
+        public SpeechBubbleState(
+            VisualElement bubble,
+            Label label,
+            Transform target,
+            SpriteRenderer renderer)
+        {
+            Bubble = bubble;
+            Label = label;
+            Target = target;
+            Renderer = renderer;
+        }
+
+        public VisualElement Bubble { get; }
+        public Label Label { get; }
+        public Transform Target { get; }
+        public SpriteRenderer Renderer { get; }
+        public float RemainingTime { get; set; }
+        public bool IsActive { get; set; }
+        public bool SetupWarningLogged { get; set; }
+    }
+}
+
+public enum SpeechSpeaker
+{
+    Player,
+    King
 }
 
 public enum KingIndicatorDirection
