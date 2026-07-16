@@ -219,6 +219,11 @@ MonoBehaviour:
   kingProgressTarget: {fileID: 483057732}
   progressStartY: 0
   progressGoalY: 41
+  speechCamera: {fileID: 1173529384}
+  playerSpeechTarget: {fileID: 1310131236}
+  playerSpeechRenderer: {fileID: 1310131237}
+  kingSpeechTarget: {fileID: 483057732}
+  kingSpeechRenderer: {fileID: 483057733}
 --- !u!114 &438477599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4601,6 +4606,11 @@ MonoBehaviour:
 --- !u!4 &1310131236 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 711747967671356579, guid: d07c8f3b6342a2c4fb0c3d1ebb314915, type: 3}
+  m_PrefabInstance: {fileID: 2100382061}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &1310131237 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 5915405083857385658, guid: d07c8f3b6342a2c4fb0c3d1ebb314915, type: 3}
   m_PrefabInstance: {fileID: 2100382061}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1761427070
