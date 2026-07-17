@@ -3,8 +3,8 @@ using UnityEngine.UIElements;
 
 public class KingHealth : MonoBehaviour
 {
-    int hp;
-    int maxHp = 10000;
+    public static int hp;
+    public static int maxHp = 10000;
     public int sunDamage = 10;
     float sunTimer;
     float sunInterval = 10;
