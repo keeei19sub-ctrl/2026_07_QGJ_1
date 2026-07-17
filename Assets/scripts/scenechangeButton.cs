@@ -1,8 +1,9 @@
 using UnityEngine;
 
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class scenechangeButton : MonoBehaviour
+public class scenechangeButton : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private  string toScene;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -15,7 +16,7 @@ public class scenechangeButton : MonoBehaviour
     void Update()
     {
     }
-    void OnMouseDown(){
+    public void OnPointerClick(PointerEventData eventData){
         SceneManager.LoadScene(toScene);
     }
 }
