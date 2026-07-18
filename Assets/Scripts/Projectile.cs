@@ -9,6 +9,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] private int damage = 100;
     [SerializeField, Min(0f)] private float speed = 5f;
     [SerializeField, Min(0f)] private float maxTravelDistance = 100f;
+    [SerializeField] private AudioSource seDeffence;
 
     private Rigidbody2D rb;
     private Vector2 direction;
@@ -52,10 +53,16 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (isDestroyed)
+        {
+            return;
+        }
+
         PlayerController playerController = collision.GetComponentInParent<PlayerController>();
         if (playerController != null && playerController.IsUmbrellaHitbox(collision))
         {
             Debug.Log("Defence");
+            PlayDefenceSound();
             DestroyProjectile();
             return;
         }
@@ -69,6 +76,19 @@ public class Projectile : MonoBehaviour
         Debug.Log("Damage");
         kingHealth.Damage(damage);
         DestroyProjectile();
+    }
+
+    private void PlayDefenceSound()
+    {
+        if (seDeffence == null || seDeffence.clip == null)
+        {
+            return;
+        }
+
+        AudioSource.PlayClipAtPoint(
+            seDeffence.clip,
+            transform.position,
+            seDeffence.volume);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

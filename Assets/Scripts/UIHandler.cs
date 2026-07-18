@@ -50,6 +50,7 @@ public class UIHandler : MonoBehaviour
     private Button m_TitleButton;
     private SpeechBubbleState m_PlayerSpeech;
     private SpeechBubbleState m_KingSpeech;
+    private Label m_PlayerMoney;
 
     private PlayerWallet m_Wallet;
     private PlayerInventory m_Inventory;
@@ -95,6 +96,7 @@ public class UIHandler : MonoBehaviour
         m_SelectedItemLabel = root.Q<Label>("ItemName");
         m_SelectedItemCountLabel = root.Q<Label>("ItemCount");
         m_SelectedItemDescriptionLabel = root.Q<Label>("ItemDescription");
+        m_PlayerMoney = root.Q<Label>("PlayerWalletCount");
         m_SelectedItemPicture = root.Q<VisualElement>("ItemPicture");
         m_PauseOverlay = root.Q<VisualElement>("PauseOverlay");
         m_ResumeButton = root.Q<Button>("ResumeButton");

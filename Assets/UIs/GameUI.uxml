@@ -1,8 +1,8 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:Template name="ItemResultUI" src="project://database/Assets/UIs/ItemResultUI.uxml?fileID=9197481963319205126&amp;guid=c4bb234eb3109e84aa5122267e7307f0&amp;type=3#ItemResultUI"/>
     <ui:Template name="ItemUI" src="project://database/Assets/UIs/ItemUI.uxml?fileID=9197481963319205126&amp;guid=aaa4715adf7de514884038108a62fcf7&amp;type=3#ItemUI"/>
+    <ui:Template name="Money" src="project://database/Assets/UIs/Money.uxml?fileID=9197481963319205126&amp;guid=0b55acab1118cf547aa577bf948e6233&amp;type=3#Money"/>
     <ui:Template name="ShopUI" src="project://database/Assets/UIs/ShopUI.uxml?fileID=9197481963319205126&amp;guid=a7402212833baa34d89048d8b0563019&amp;type=3#ShopUI"/>
-    <Style src=""/>
     <ui:VisualElement name="HealthBackground" style="flex-grow: 0; background-image: url(&quot;project://database/Assets/Sprites/UIHealthFrame.png?fileID=-5047484281555416397&amp;guid=5e413782706c8b1438a8140decd574a4&amp;type=3#UIHealthFrame_0&quot;); width: 50%; height: 50%; -unity-background-scale-mode: scale-to-fit;">
         <ui:VisualElement name="HealthBarContainer" style="flex-grow: 1; position: absolute; height: 28%; width: 56%; top: 34%; left: 41%;">
             <ui:VisualElement name="HealthBar" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Sprites/UIHealthBar.png?fileID=-4859573389558333075&amp;guid=6cae8b95a2b7c554cb53e5542893752e&amp;type=3#UIHealthBar_0&quot;);"/>
@@ -40,4 +40,5 @@
             <ui:Label text="ESC でもゲームにもどれます" class="pause-hint"/>
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:Instance template="Money" name="PlayerWallet" style="width: 20%; height: 5%; right: 0%; position: absolute; margin-top: 1%; margin-right: 5%;"/>
 </ui:UXML>
