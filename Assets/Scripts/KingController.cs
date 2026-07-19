@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class KingController : MonoBehaviour
 {
-    private static readonly int IsBackParameter = Animator.StringToHash("Isback");
+    private static readonly int IsBackParameter = Animator.StringToHash("IsBack");
     private static readonly int IsRightParameter = Animator.StringToHash("IsRight");
 
     public event Action DestinationRequested;
