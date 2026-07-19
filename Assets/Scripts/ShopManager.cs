@@ -34,7 +34,7 @@ public class ShopManager : MonoBehaviour
     [Tooltip("このY座標まで店舗を生成する")]
     [SerializeField] private float lastStoreY = 70f;
     [SerializeField] private float leftStoreX = -3f;
-    [SerializeField] private float rightStoreX = 7f;
+    [SerializeField] private float rightStoreX = 8f;
     [Tooltip("0始まりの店舗番号と商品ID。未登録の店舗は空店舗になる")]
     [SerializeField] private List<ShopProductAssignment> productAssignments = new();
 
