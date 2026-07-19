@@ -52,6 +52,7 @@ MonoBehaviour:
   speed: 30
   maxTravelDistance: 100
   seDeffence: {fileID: 3302561147113419914}
+  effectBreakPrefab: {fileID: 4509022916383171312, guid: 86d075b8fed95ea4fac7adc6a15a3c8d, type: 3}
 --- !u!82 &3302561147113419914
 AudioSource:
   m_ObjectHideFlags: 0

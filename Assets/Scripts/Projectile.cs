@@ -10,6 +10,7 @@ public class Projectile : MonoBehaviour
     [SerializeField, Min(0f)] private float speed = 5f;
     [SerializeField, Min(0f)] private float maxTravelDistance = 100f;
     [SerializeField] private AudioSource seDeffence;
+    [SerializeField] private GameObject effectBreakPrefab;
 
     private Rigidbody2D rb;
     private Vector2 direction;
@@ -63,6 +64,7 @@ public class Projectile : MonoBehaviour
         {
             Debug.Log("Defence");
             PlayDefenceSound();
+            CreateBreakEffect(collision);
             DestroyProjectile();
             return;
         }
@@ -89,6 +91,36 @@ public class Projectile : MonoBehaviour
             seDeffence.clip,
             transform.position,
             seDeffence.volume);
+    }
+
+    private void CreateBreakEffect(Collider2D collision)
+    {
+        if (effectBreakPrefab == null)
+        {
+            return;
+        }
+
+        Vector2 hitPosition = collision.ClosestPoint(transform.position);
+        GameObject breakEffect = Instantiate(
+            effectBreakPrefab,
+            hitPosition,
+            Quaternion.identity);
+
+        Animator animator = breakEffect.GetComponent<Animator>();
+        if (animator == null || animator.runtimeAnimatorController == null)
+        {
+            Destroy(breakEffect);
+            return;
+        }
+
+        AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
+        if (clips.Length == 0)
+        {
+            Destroy(breakEffect);
+            return;
+        }
+
+        Destroy(breakEffect, clips[0].length);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
