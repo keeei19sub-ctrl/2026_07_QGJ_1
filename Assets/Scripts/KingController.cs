@@ -4,6 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class KingController : MonoBehaviour
 {
+    private static readonly int IsBackParameter = Animator.StringToHash("Isback");
+
     public event Action DestinationRequested;
     public event Action DestinationReached;
 
@@ -12,6 +14,7 @@ public class KingController : MonoBehaviour
     [SerializeField] private Vector2 goalPos;
     [SerializeField] private float goalStartY = 35f;
     [SerializeField, Min(0.001f)] private float arrivalDistance = 0.05f;
+    private Animator animator;
 
     private enum State
     {
@@ -32,6 +35,7 @@ public class KingController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     private void Start()
@@ -48,10 +52,12 @@ public class KingController : MonoBehaviour
                 {
                     EnterShopping();
                 }
+                animator.SetBool("IsShopping", false);
                 break;
 
             case State.Shopping:
                 shoppingTimer -= Time.deltaTime;
+                animator.SetBool("IsShopping", true);
                 if (shoppingTimer <= 0f)
                 {
                     AcquireNextDestination();
@@ -71,6 +77,7 @@ public class KingController : MonoBehaviour
         {
             case State.GoShop:
                 MoveTowards(nextDestination);
+
                 break;
 
             case State.GoGoal:
@@ -104,6 +111,11 @@ public class KingController : MonoBehaviour
         {
             AcquireNextDestination();
         }
+    }
+
+    public void SetIsBack(bool isBack)
+    {
+        animator.SetBool(IsBackParameter, isBack);
     }
 
     private void AcquireNextDestination()
@@ -147,6 +159,11 @@ public class KingController : MonoBehaviour
         }
 
         state = nextState;
+        if (state == State.Shopping)
+        {
+            SetIsBack(false);
+        }
+
         Debug.Log($"King state changed to {state}.", this);
     }
 }

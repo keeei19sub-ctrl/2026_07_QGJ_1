@@ -33,8 +33,8 @@ public class ShopManager : MonoBehaviour
     [SerializeField, Min(0.01f)] private float storeInterval = 10f;
     [Tooltip("このY座標まで店舗を生成する")]
     [SerializeField] private float lastStoreY = 70f;
-    [SerializeField] private float leftStoreX = -2f;
-    [SerializeField] private float rightStoreX = 4f;
+    [SerializeField] private float leftStoreX = -3f;
+    [SerializeField] private float rightStoreX = 7f;
     [Tooltip("0始まりの店舗番号と商品ID。未登録の店舗は空店舗になる")]
     [SerializeField] private List<ShopProductAssignment> productAssignments = new();
 
@@ -236,6 +236,12 @@ public class ShopManager : MonoBehaviour
     private void SpawnShop(Vector2 position, ItemDefinition item, int shopIndex)
     {
         GameObject shopObject = Instantiate(shopPrefab, position, Quaternion.identity);
+        if(position.x < 0f)
+        {
+            Vector3 scale = shopObject.transform.localScale;
+            scale.x *= -1;
+            shopObject.transform.localScale = scale;
+        }
         Shop shop = shopObject.GetComponent<Shop>();
         shop.Initialize(item);
 

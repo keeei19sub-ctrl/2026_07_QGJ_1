@@ -84,6 +84,7 @@ public class KingMoveManager : MonoBehaviour
         }
 
         nextStoreNumber = candidates[Random.Range(0, candidateCount)];
+        kingController.SetIsBack(nextStoreNumber - currentStoreNumber == -1);
         bool useLeftSide = Random.value < 0.5f;
         kingController.SetNextDestination(
             shopManager.GetStoreDestination(nextStoreNumber, useLeftSide));
