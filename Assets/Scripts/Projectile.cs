@@ -6,9 +6,10 @@ public class Projectile : MonoBehaviour
 {
     public event Action<Projectile> Destroyed;
 
-    [SerializeField] private int damage = 10;
+    [SerializeField] private int damage = 100;
     [SerializeField, Min(0f)] private float speed = 5f;
     [SerializeField, Min(0f)] private float maxTravelDistance = 100f;
+    [SerializeField] private AudioSource seDeffence;
 
     private Rigidbody2D rb;
     private Vector2 direction;
@@ -52,21 +53,50 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        KingHealth kingHealth = collision.GetComponent<KingHealth>();
-        if (kingHealth == null)
+        if (isDestroyed)
         {
-            if (collision.GetComponentInParent<parasol>() != null)
-            {
-                DestroyProjectile();
-            }
             return;
         }
 
+        PlayerController playerController = collision.GetComponentInParent<PlayerController>();
+        if (playerController != null && playerController.IsUmbrellaHitbox(collision))
+        {
+            Debug.Log("Defence");
+            PlayDefenceSound();
+            DestroyProjectile();
+            return;
+        }
+
+        KingHealth kingHealth = collision.GetComponent<KingHealth>();
+        if (kingHealth == null)
+        {
+            return;
+        }
+
+        Debug.Log("Damage");
         kingHealth.Damage(damage);
         DestroyProjectile();
     }
 
+    private void PlayDefenceSound()
+    {
+        if (seDeffence == null || seDeffence.clip == null)
+        {
+            return;
+        }
+
+        AudioSource.PlayClipAtPoint(
+            seDeffence.clip,
+            transform.position,
+            seDeffence.volume);
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
+    {
+        DestroyProjectile();
+    }
+
+    public void Despawn()
     {
         DestroyProjectile();
     }

@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d499393b3239ac429d1bce4bd74ace7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileManager
-  projectilePrefab: {fileID: 7823341646407224956, guid: 100af6b12538d234cab254ee655bceaa, type: 3}
+  projectilePrefab: {fileID: 4139497439051375496, guid: 100af6b12538d234cab254ee655bceaa, type: 3}
   target: {fileID: 0}
   gameplayCamera: {fileID: 0}
   maxConcurrentAttacks: 3

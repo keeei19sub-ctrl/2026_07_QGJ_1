@@ -10,13 +10,15 @@ GameObject:
   m_Component:
   - component: {fileID: 6514689440483257481}
   - component: {fileID: 1897852896941178719}
+  - component: {fileID: 1052517264748581369}
   - component: {fileID: 706695715068655700}
   - component: {fileID: 4521311191306230022}
   - component: {fileID: 5415553240187018672}
   - component: {fileID: 2571356530258288596}
   - component: {fileID: 8250850828830303479}
   - component: {fileID: 3367033546887208737}
-  - component: {fileID: 9028047548069254713}
+  - component: {fileID: 7281442524727001842}
+  - component: {fileID: 8436915716920995060}
   m_Layer: 0
   m_Name: King
   m_TagString: Untagged
@@ -49,28 +51,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45fadfc436479a04c9db285381e47fd2, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KingController
-  shopDist: 20
-  speed: 5
-  state: 0
+  speed: 7
   shoppingMaxTime: 10
---- !u!114 &3367033546887208737
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7321076339299950448}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d3d2eb94a3f36340bd03bead1854671, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::KingMoveManager
-  kingController: {fileID: 1897852896941178719}
-  shopManager: {fileID: 9028047548069254713}
-  currentStoreNumber: 0
---- !u!114 &9028047548069254713
+  goalPos: {x: 1, y: 41}
+  goalStartY: 35
+  arrivalDistance: 0.05
+  state: 0
+--- !u!114 &1052517264748581369
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -80,15 +69,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e4e5a91ae0c46449900bdd782bd66c8, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopManager
   shopPrefab: {fileID: 5979107351694063518, guid: 57d01dde18df24a4bbb6b844d067f8ed, type: 3}
   itemCatalog: {fileID: 11400000, guid: a91d6b0f7c4e4ab6bb74c9995f789ce1, type: 2}
   firstStoreOffset: 3
-  storeInterval: 4
-  lastStoreY: 35
+  storeInterval: 10
+  lastStoreY: 70
   leftStoreX: -2
   rightStoreX: 4
+  productAssignments:
+  - shopIndex: 2
+    itemId: king_medicine
+  - shopIndex: 5
+    itemId: large_umbrella_potion
+  - shopIndex: 6
+    itemId: stone_stop_charm
+  - shopIndex: 9
+    itemId: king_medicine
+  - shopIndex: 10
+    itemId: large_umbrella_potion
+  - shopIndex: 13
+    itemId: stone_stop_charm
 --- !u!212 &706695715068655700
 SpriteRenderer:
   serializedVersion: 3
@@ -161,7 +163,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca9341472261037439a73d1ed7891bf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KingHealth
-  sunDamage: 10
+  maxHp: 30000
+  sunDamage: 1
+  seHeal: {fileID: 8436915716920995060}
 --- !u!114 &5415553240187018672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,6 +180,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KingSun
   targetTag: Shadow
   processInterval: 0
+  umbrellaAnimator: {fileID: 0}
 --- !u!61 &2571356530258288596
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -210,7 +215,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.01173079, y: 1.1963596}
+  m_Offset: {x: -0.01173079, y: 0.9399148}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
@@ -220,7 +225,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.1619236, y: 1.8725244}
+  m_Size: {x: 1.1619236, y: 1.3596349}
   m_EdgeRadius: 0
 --- !u!50 &8250850828830303479
 Rigidbody2D:
@@ -249,3 +254,136 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &3367033546887208737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7321076339299950448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d3d2eb94a3f36340bd03bead1854671, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KingMoveManager
+  kingController: {fileID: 1897852896941178719}
+  shopManager: {fileID: 1052517264748581369}
+  currentStoreNumber: 0
+--- !u!114 &7281442524727001842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7321076339299950448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86d75358e18140bdb2b5f144d36df1f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KingCoinRewardEmitter
+  coinPrefab: {fileID: 11400000, guid: d876b7ee08c548dc84c4260460be287d, type: 3}
+  spawnInterval: 2
+  rewardAmount: 10
+  maxConcurrentCoins: 5
+  roadCenterX: 0.5
+  horizontalDistanceRange: {x: 1, y: 1.8}
+  downwardDistance: 0.5
+  flightDuration: 0.6
+  arcHeight: 1.2
+--- !u!82 &8436915716920995060
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7321076339299950448}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 5c3404dfa858c414ca63d3c57f0a6b8d, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

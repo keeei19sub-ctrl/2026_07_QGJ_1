@@ -15,6 +15,9 @@ public class ProjectileManager : MonoBehaviour
     private readonly HashSet<Projectile> activeProjectiles = new();
     private float attackIntervalTimer;
     private Coroutine pendingAttack;
+    private Coroutine suppressionTimer;
+
+    public bool AreAttacksSuppressed { get; private set; }
 
     private void Awake()
     {
@@ -35,7 +38,10 @@ public class ProjectileManager : MonoBehaviour
     {
         activeProjectiles.RemoveWhere(projectile => projectile == null);
 
-        if (projectilePrefab == null || target == null || pendingAttack != null)
+        if (AreAttacksSuppressed
+            || projectilePrefab == null
+            || target == null
+            || pendingAttack != null)
         {
             return;
         }
@@ -64,7 +70,7 @@ public class ProjectileManager : MonoBehaviour
         yield return new WaitForSeconds(warningDuration);
         UIHandler.instance?.HideProjectileWarning();
 
-        if (projectilePrefab == null || target == null)
+        if (AreAttacksSuppressed || projectilePrefab == null || target == null)
         {
             pendingAttack = null;
             yield break;
@@ -110,14 +116,74 @@ public class ProjectileManager : MonoBehaviour
         OnProjectileDestroyed(projectile);
     }
 
-    private void OnDisable()
+    public bool SuppressAttacks(float duration)
     {
-        if (pendingAttack != null)
+        if (duration <= 0f || !isActiveAndEnabled)
         {
-            StopCoroutine(pendingAttack);
-            pendingAttack = null;
+            return false;
         }
 
+        AreAttacksSuppressed = true;
+        attackIntervalTimer = attackInterval;
+        CancelPendingAttack();
+        DespawnAllProjectiles();
+        UIHandler.instance?.HideProjectileWarning();
+
+        if (suppressionTimer != null)
+        {
+            StopCoroutine(suppressionTimer);
+        }
+
+        suppressionTimer = StartCoroutine(SuppressionCountdown(duration));
+        return true;
+    }
+
+    private IEnumerator SuppressionCountdown(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        suppressionTimer = null;
+        AreAttacksSuppressed = false;
+        attackIntervalTimer = attackInterval;
+    }
+
+    private void CancelPendingAttack()
+    {
+        if (pendingAttack == null)
+        {
+            return;
+        }
+
+        StopCoroutine(pendingAttack);
+        pendingAttack = null;
+    }
+
+    private void DespawnAllProjectiles()
+    {
+        Projectile[] projectiles = FindObjectsByType<Projectile>();
+        foreach (Projectile projectile in projectiles)
+        {
+            if (projectile != null)
+            {
+                projectile.Despawn();
+            }
+        }
+
+        activeProjectiles.Clear();
+    }
+
+    private void OnDisable()
+    {
+        CancelPendingAttack();
+
+        if (suppressionTimer != null)
+        {
+            StopCoroutine(suppressionTimer);
+            suppressionTimer = null;
+        }
+
+        AreAttacksSuppressed = false;
+        attackIntervalTimer = attackInterval;
         UIHandler.instance?.HideProjectileWarning();
     }
 }

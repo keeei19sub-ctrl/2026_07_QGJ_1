@@ -1,13 +1,36 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class UIHandler : MonoBehaviour
 {
     private const float KingIndicatorWidthPercent = 5f;
     private const float KingIndicatorEdgePaddingPercent = 1f;
+    private const float ProgressIconHeightPercent = 10f;
+    private const float SpeechBubbleWidthPercent = 26f;
+    private const float SpeechBubbleHeightPercent = 19f;
+    private const float SpeechBubbleEdgePaddingPercent = 1f;
+    private const float SpeechBubbleGapPercent = 1f;
+    private const float MinimumSpeechDuration = 0.1f;
+    private const float DefaultSpeechDuration = 3f;
+
+    [Header("Progress Indicator")]
+    [SerializeField] private Transform playerProgressTarget;
+    [SerializeField] private Transform kingProgressTarget;
+    [SerializeField] private float progressStartY;
+    [SerializeField] private float progressGoalY = 41f;
+
+    [Header("Speech Bubbles")]
+    [SerializeField] private Camera speechCamera;
+    [SerializeField] private Transform playerSpeechTarget;
+    [SerializeField] private SpriteRenderer playerSpeechRenderer;
+    [SerializeField] private Transform kingSpeechTarget;
+    [SerializeField] private SpriteRenderer kingSpeechRenderer;
 
     private VisualElement m_Healthbar;
-    private VisualElement m_Progressbar;
+    private VisualElement m_PlayerProgressIcon;
+    private VisualElement m_KingProgressIcon;
     private VisualElement m_KingAboveIndicator;
     private VisualElement m_KingBelowIndicator;
     private VisualElement m_ProjectileWarningLeft;
@@ -21,11 +44,19 @@ public class UIHandler : MonoBehaviour
     private Label m_ShopItemNameLabel;
     private Label m_ShopPriceLabel;
     private Label m_ShopMessageLabel;
+    private VisualElement m_PauseOverlay;
+    private Button m_ResumeButton;
+    private Button m_RestartButton;
+    private Button m_TitleButton;
+    private SpeechBubbleState m_PlayerSpeech;
+    private SpeechBubbleState m_KingSpeech;
+    private Label m_PlayerMoney;
 
     private PlayerWallet m_Wallet;
     private PlayerInventory m_Inventory;
     private Shop m_VisibleShop;
     private bool m_PlayerEventsSubscribed;
+    private bool m_IsPaused;
 
     public static UIHandler instance { get; private set; }
 
@@ -50,7 +81,8 @@ public class UIHandler : MonoBehaviour
 
         VisualElement root = uiDocument.rootVisualElement;
         m_Healthbar = root.Q<VisualElement>("HealthBar");
-        m_Progressbar = root.Q<VisualElement>("ProgressBar");
+        m_PlayerProgressIcon = root.Q<VisualElement>("PlayerProgressIcon");
+        m_KingProgressIcon = root.Q<VisualElement>("KingProgressIcon");
         m_KingAboveIndicator = root.Q<VisualElement>("KingAboveIndicator");
         m_KingBelowIndicator = root.Q<VisualElement>("KingBelowIndicator");
         m_ProjectileWarningLeft = root.Q<VisualElement>("ProjectileWarningLeft");
@@ -64,14 +96,59 @@ public class UIHandler : MonoBehaviour
         m_SelectedItemLabel = root.Q<Label>("ItemName");
         m_SelectedItemCountLabel = root.Q<Label>("ItemCount");
         m_SelectedItemDescriptionLabel = root.Q<Label>("ItemDescription");
+        m_PlayerMoney = root.Q<Label>("PlayerWalletCount");
         m_SelectedItemPicture = root.Q<VisualElement>("ItemPicture");
+        m_PauseOverlay = root.Q<VisualElement>("PauseOverlay");
+        m_ResumeButton = root.Q<Button>("ResumeButton");
+        m_RestartButton = root.Q<Button>("RestartButton");
+        m_TitleButton = root.Q<Button>("TitleButton");
+        m_PlayerSpeech = new SpeechBubbleState(
+            root.Q<VisualElement>("PlayerSpeechBubble"),
+            root.Q<Label>("PlayerSpeechLabel"),
+            playerSpeechTarget,
+            playerSpeechRenderer);
+        m_KingSpeech = new SpeechBubbleState(
+            root.Q<VisualElement>("KingSpeechBubble"),
+            root.Q<Label>("KingSpeechLabel"),
+            kingSpeechTarget,
+            kingSpeechRenderer);
+
+        if (speechCamera == null)
+        {
+            speechCamera = Camera.main;
+        }
+
+        RegisterPauseCallbacks();
 
         SetHealthValue(1.0f);
-        SetProgressValue(0.0f);
+        SetPlayerProgressValue(0.0f);
+        SetKingProgressValue(0.0f);
         HideKingIndicator();
         HideProjectileWarning();
+        HideSpeech(SpeechSpeaker.Player);
+        HideSpeech(SpeechSpeaker.King);
         HideShop();
         RefreshPlayerUI();
+        SetPaused(false);
+
+        ShowSpeech(SpeechSpeaker.King, "出発じゃ！");
+        ShowSpeech(SpeechSpeaker.Player, "王様についていこう！");
+    }
+
+    private void Update()
+    {
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            SetPaused(!m_IsPaused);
+        }
+
+        UpdateSpeechTimers();
+    }
+
+    private void LateUpdate()
+    {
+        UpdateProgressIcons();
+        UpdateSpeechBubblePositions();
     }
 
     private void OnDisable()
@@ -81,11 +158,91 @@ public class UIHandler : MonoBehaviour
 
     private void OnDestroy()
     {
+        UnregisterPauseCallbacks();
+        Time.timeScale = 1f;
+
         UnsubscribeFromPlayerEvents();
         if (instance == this)
         {
             instance = null;
         }
+    }
+
+    public void SetPaused(bool paused)
+    {
+        m_IsPaused = paused;
+        Time.timeScale = paused ? 0f : 1f;
+
+        if (m_PauseOverlay != null)
+        {
+            m_PauseOverlay.style.display = paused ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        if (paused)
+        {
+            m_ResumeButton?.Focus();
+        }
+    }
+
+    private void RegisterPauseCallbacks()
+    {
+        if (m_ResumeButton != null)
+        {
+            m_ResumeButton.clicked += ResumeGame;
+        }
+
+        if (m_RestartButton != null)
+        {
+            m_RestartButton.clicked += RestartScene;
+        }
+
+        if (m_TitleButton != null)
+        {
+            m_TitleButton.clicked += ReturnToTitle;
+        }
+    }
+
+    private void UnregisterPauseCallbacks()
+    {
+        if (m_ResumeButton != null)
+        {
+            m_ResumeButton.clicked -= ResumeGame;
+        }
+
+        if (m_RestartButton != null)
+        {
+            m_RestartButton.clicked -= RestartScene;
+        }
+
+        if (m_TitleButton != null)
+        {
+            m_TitleButton.clicked -= ReturnToTitle;
+        }
+    }
+
+    private void ResumeGame()
+    {
+        SetPaused(false);
+    }
+
+    private void RestartScene()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void ReturnToTitle()
+    {
+        Time.timeScale = 1f;
+
+        if (Application.CanStreamedLevelBeLoaded("title"))
+        {
+            SceneManager.LoadScene("title");
+            return;
+        }
+
+        Debug.LogWarning("The title scene is not included in Build Settings.", this);
+        SetPaused(false);
     }
 
     public void BindPlayer(PlayerWallet wallet, PlayerInventory inventory)
@@ -184,12 +341,14 @@ public class UIHandler : MonoBehaviour
         }
     }
 
-    public void SetProgressValue(float percentage)
+    public void SetPlayerProgressValue(float percentage)
     {
-        if (m_Progressbar != null)
-        {
-            m_Progressbar.style.height = Length.Percent(100 * Mathf.Clamp01(percentage));
-        }
+        SetProgressIconPosition(m_PlayerProgressIcon, percentage);
+    }
+
+    public void SetKingProgressValue(float percentage)
+    {
+        SetProgressIconPosition(m_KingProgressIcon, percentage);
     }
 
     public void ShowKingIndicator(KingIndicatorDirection direction, float viewportX)
@@ -224,6 +383,182 @@ public class UIHandler : MonoBehaviour
     {
         SetElementVisible(m_ProjectileWarningLeft, false);
         SetElementVisible(m_ProjectileWarningRight, false);
+    }
+
+    public void ShowSpeech(
+        SpeechSpeaker speaker,
+        string text,
+        float duration = DefaultSpeechDuration)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            HideSpeech(speaker);
+            return;
+        }
+
+        SpeechBubbleState state = GetSpeechState(speaker);
+        if (!CanShowSpeech(speaker, state))
+        {
+            return;
+        }
+
+        state.Label.text = text;
+        state.RemainingTime = Mathf.Max(MinimumSpeechDuration, duration);
+        state.IsActive = true;
+        UpdateSpeechBubblePosition(state);
+    }
+
+    public void HideSpeech(SpeechSpeaker speaker)
+    {
+        SpeechBubbleState state = GetSpeechState(speaker);
+        if (state == null)
+        {
+            return;
+        }
+
+        state.IsActive = false;
+        state.RemainingTime = 0f;
+        SetElementVisible(state.Bubble, false);
+    }
+
+    private void UpdateSpeechTimers()
+    {
+        UpdateSpeechTimer(SpeechSpeaker.Player, m_PlayerSpeech);
+        UpdateSpeechTimer(SpeechSpeaker.King, m_KingSpeech);
+    }
+
+    private void UpdateSpeechTimer(SpeechSpeaker speaker, SpeechBubbleState state)
+    {
+        if (state == null || !state.IsActive)
+        {
+            return;
+        }
+
+        state.RemainingTime -= Time.deltaTime;
+        if (state.RemainingTime <= 0f)
+        {
+            HideSpeech(speaker);
+        }
+    }
+
+    private void UpdateSpeechBubblePositions()
+    {
+        UpdateSpeechBubblePosition(m_PlayerSpeech);
+        UpdateSpeechBubblePosition(m_KingSpeech);
+    }
+
+    private void UpdateSpeechBubblePosition(SpeechBubbleState state)
+    {
+        if (state == null || !state.IsActive || state.Bubble == null)
+        {
+            return;
+        }
+
+        if (speechCamera == null || state.Target == null || state.Renderer == null)
+        {
+            SetElementVisible(state.Bubble, false);
+            return;
+        }
+
+        Bounds bounds = state.Renderer.bounds;
+        Vector3 viewportMin = speechCamera.WorldToViewportPoint(bounds.min);
+        Vector3 viewportMax = speechCamera.WorldToViewportPoint(bounds.max);
+        bool isInFrontOfCamera = viewportMin.z > 0f && viewportMax.z > 0f;
+        bool overlapsViewport = viewportMax.x >= 0f && viewportMin.x <= 1f
+            && viewportMax.y >= 0f && viewportMin.y <= 1f;
+
+        if (!isInFrontOfCamera || !overlapsViewport)
+        {
+            SetElementVisible(state.Bubble, false);
+            return;
+        }
+
+        Vector3 anchorWorldPosition = new Vector3(
+            state.Target.position.x,
+            bounds.max.y,
+            state.Target.position.z);
+        Vector3 anchorViewportPosition = speechCamera.WorldToViewportPoint(anchorWorldPosition);
+        float leftPercent = Mathf.Clamp(
+            anchorViewportPosition.x * 100f - SpeechBubbleWidthPercent * 0.5f,
+            SpeechBubbleEdgePaddingPercent,
+            100f - SpeechBubbleWidthPercent - SpeechBubbleEdgePaddingPercent);
+        float topPercent = Mathf.Clamp(
+            (1f - anchorViewportPosition.y) * 100f
+                - SpeechBubbleHeightPercent
+                - SpeechBubbleGapPercent,
+            SpeechBubbleEdgePaddingPercent,
+            100f - SpeechBubbleHeightPercent - SpeechBubbleEdgePaddingPercent);
+
+        state.Bubble.style.left = Length.Percent(leftPercent);
+        state.Bubble.style.top = Length.Percent(topPercent);
+        SetElementVisible(state.Bubble, true);
+    }
+
+    private SpeechBubbleState GetSpeechState(SpeechSpeaker speaker)
+    {
+        switch (speaker)
+        {
+            case SpeechSpeaker.Player:
+                return m_PlayerSpeech;
+            case SpeechSpeaker.King:
+                return m_KingSpeech;
+            default:
+                Debug.LogWarning($"Unsupported speech speaker: {speaker}.", this);
+                return null;
+        }
+    }
+
+    private bool CanShowSpeech(SpeechSpeaker speaker, SpeechBubbleState state)
+    {
+        if (state != null
+            && state.Bubble != null
+            && state.Label != null
+            && state.Target != null
+            && state.Renderer != null
+            && speechCamera != null)
+        {
+            return true;
+        }
+
+        if (state == null || !state.SetupWarningLogged)
+        {
+            Debug.LogWarning(
+                $"Speech bubble setup is incomplete for {speaker}; the line was ignored.",
+                this);
+
+            if (state != null)
+            {
+                state.SetupWarningLogged = true;
+            }
+        }
+
+        return false;
+    }
+
+    private void UpdateProgressIcons()
+    {
+        if (Mathf.Approximately(progressStartY, progressGoalY))
+        {
+            SetPlayerProgressValue(0f);
+            SetKingProgressValue(0f);
+            return;
+        }
+
+        if (playerProgressTarget != null)
+        {
+            SetPlayerProgressValue(Mathf.InverseLerp(
+                progressStartY,
+                progressGoalY,
+                playerProgressTarget.position.y));
+        }
+
+        if (kingProgressTarget != null)
+        {
+            SetKingProgressValue(Mathf.InverseLerp(
+                progressStartY,
+                progressGoalY,
+                kingProgressTarget.position.y));
+        }
     }
 
     private void SubscribeToPlayerEvents()
@@ -353,6 +688,47 @@ public class UIHandler : MonoBehaviour
             element.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
     }
+
+    private static void SetProgressIconPosition(VisualElement icon, float percentage)
+    {
+        if (icon == null)
+        {
+            return;
+        }
+
+        float clampedPercentage = Mathf.Clamp01(percentage);
+        float topPercent = (1f - clampedPercentage) * (100f - ProgressIconHeightPercent);
+        icon.style.top = Length.Percent(topPercent);
+    }
+
+    private sealed class SpeechBubbleState
+    {
+        public SpeechBubbleState(
+            VisualElement bubble,
+            Label label,
+            Transform target,
+            SpriteRenderer renderer)
+        {
+            Bubble = bubble;
+            Label = label;
+            Target = target;
+            Renderer = renderer;
+        }
+
+        public VisualElement Bubble { get; }
+        public Label Label { get; }
+        public Transform Target { get; }
+        public SpriteRenderer Renderer { get; }
+        public float RemainingTime { get; set; }
+        public bool IsActive { get; set; }
+        public bool SetupWarningLogged { get; set; }
+    }
+}
+
+public enum SpeechSpeaker
+{
+    Player,
+    King
 }
 
 public enum KingIndicatorDirection

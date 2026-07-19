@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(PlayerWallet), typeof(PlayerInventory))]
+[RequireComponent(typeof(PlayerItemEffectController))]
 public class PlayerController : MonoBehaviour
 {
     public InputAction MoveAction;
@@ -12,7 +13,7 @@ public class PlayerController : MonoBehaviour
     public InputAction ConsumeItem = new InputAction(
         "Consume Item",
         InputActionType.Button,
-        "<Keyboard>/e");
+        "<Keyboard>/shift");
 
     Rigidbody2D rigidbody2d;
     Vector2 move;
@@ -24,10 +25,19 @@ public class PlayerController : MonoBehaviour
 
     public bool IsUmbrellaSwinging => parasolDirection != 0;
 
+    public bool IsUmbrellaHitbox(Collider2D hitbox)
+    {
+        return hitbox != null &&
+            ((hitbox == leftHitbox && leftHitbox.enabled) ||
+             (hitbox == rightHitbox && rightHitbox.enabled));
+    }
+
     [SerializeField] private Collider2D leftHitbox;
     [SerializeField] private Collider2D rightHitbox;
     [SerializeField] private PlayerWallet wallet;
     [SerializeField] private PlayerInventory inventory;
+    [SerializeField] private PlayerItemEffectController itemEffectController;
+    [SerializeField] private AudioSource sePurchaseSuccess;
 
     Animator m_umbrella;
 
@@ -38,9 +48,12 @@ public class PlayerController : MonoBehaviour
         rigidbody2d = GetComponent<Rigidbody2D>();
         wallet = wallet != null ? wallet : GetComponent<PlayerWallet>();
         inventory = inventory != null ? inventory : GetComponent<PlayerInventory>();
+        itemEffectController = itemEffectController != null
+            ? itemEffectController
+            : GetComponent<PlayerItemEffectController>();
 
         EnsureButtonAction(ref BuyItem, "Buy Item", "<Keyboard>/space");
-        EnsureButtonAction(ref ConsumeItem, "Consume Item", "<Keyboard>/e");
+        EnsureButtonAction(ref ConsumeItem, "Consume Item", "<Keyboard>/shift");
     }
 
     private void OnEnable()
@@ -159,19 +172,21 @@ public class PlayerController : MonoBehaviour
         if (currentShop != null && BuyItem.WasPressedThisFrame())
         {
             PurchaseResult result = currentShop.TryPurchase(wallet, inventory);
+            if(result == PurchaseResult.Success)sePurchaseSuccess.Play();
             UIHandler.instance?.ShowPurchaseResult(result);
         }
     }
 
     private void UpdateInventorySelection()
     {
-        if (inventory == null)
+        if (inventory == null || itemEffectController == null)
         {
             return;
         }
+
         if (ConsumeItem.WasPressedThisFrame())
         {
-            inventory.TryConsumeSelected();
+            itemEffectController.TryUseSelectedItem();
         }
     }
 

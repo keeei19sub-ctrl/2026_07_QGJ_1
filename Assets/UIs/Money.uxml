@@ -1,0 +1,5 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Sprites/Money_background.png?fileID=380786062147865721&amp;guid=9d05a025f89b4e848b8a41cf46e8e79a&amp;type=3#Money_background_0&quot;);">
+        <ui:Label text="Gold" name="MoneyLabel" style="margin-top: 0%; margin-right: 0%; margin-bottom: 0%; margin-left: 0%; padding-top: 0%; padding-right: 5%; padding-bottom: 0%; padding-left: 21%; width: 100%; height: 100%; color: rgb(253, 253, 253); font-size: 42px;"/>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,35 +1,88 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class KingHealth : MonoBehaviour
 {
     public static int hp;
-    public static int maxHp = 10000;
-    public int sunDamage = 10;
-    float sunTimer;
-    float sunInterval = 10;
+    public static int maxHp = 30000;
+
+    private bool initialized;
+
+    public int sunDamage = 1;
     public static bool shadow = false;
-  	public int health { get { return hp; }}
-    void Start()
+
+    public int health => hp;
+    public int CurrentHealth => hp;
+    public int MaxHealth => maxHp;
+
+    [SerializeField] private AudioSource seHeal;
+    private void Awake()
     {
-        hp = maxHp;
-        sunTimer = sunInterval;
+        InitializeHealth();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        if(hp <= 0)
+        RefreshHealthBar();
+    }
+
+    private void Update()
+    {
+        if (hp <= 0)
         {
-            angry();
+            Angry();
         }
     }
+
     public void Damage(int amount)
     {
-        hp = Mathf.Clamp(hp-amount, 0, maxHp);
-        UIHandler.instance.SetHealthValue(hp / (float)maxHp);
+        InitializeHealth();
+        hp = Mathf.Clamp(hp - amount, 0, maxHp);
+        RefreshHealthBar();
     }
-    void angry()
+
+    public bool Heal(int amount)
+    {
+        if (amount < 0)
+        {
+            return false;
+        }
+
+        InitializeHealth();
+        hp = Mathf.Clamp(hp + amount, 0, maxHp);
+        seHeal.Play();
+        RefreshHealthBar();
+        return true;
+    }
+
+    public bool HealByMaxHealthFraction(float fraction)
+    {
+        if (fraction <= 0f)
+        {
+            return false;
+        }
+
+        int amount = Mathf.Max(1, Mathf.RoundToInt(maxHp * fraction));
+        return Heal(amount);
+    }
+
+    private void InitializeHealth()
+    {
+        if (initialized)
+        {
+            return;
+        }
+
+        maxHp = Mathf.Max(1, maxHp);
+        hp = maxHp;
+        initialized = true;
+    }
+
+    private void RefreshHealthBar()
+    {
+        UIHandler.instance?.SetHealthValue(hp / (float)maxHp);
+    }
+
+    private void Angry()
     {
         Debug.Log("angry");
     }

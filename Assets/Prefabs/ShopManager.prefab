@@ -48,6 +48,19 @@ MonoBehaviour:
   itemCatalog: {fileID: 11400000, guid: a91d6b0f7c4e4ab6bb74c9995f789ce1, type: 2}
   firstStoreOffset: 3
   storeInterval: 10
-  lastStoreY: 35
+  lastStoreY: 90
   leftStoreX: -2
   rightStoreX: 4
+  productAssignments:
+  - shopIndex: 2
+    itemId: king_medicine
+  - shopIndex: 5
+    itemId: large_umbrella_potion
+  - shopIndex: 6
+    itemId: stone_stop_charm
+  - shopIndex: 9
+    itemId: king_medicine
+  - shopIndex: 10
+    itemId: large_umbrella_potion
+  - shopIndex: 13
+    itemId: stone_stop_charm

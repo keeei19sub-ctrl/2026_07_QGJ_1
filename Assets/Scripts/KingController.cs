@@ -28,12 +28,10 @@ public class KingController : MonoBehaviour
     private Vector2 nextDestination;
     private Vector2? pendingDestination;
     private float shoppingTimer;
-    private float progressStartY;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        progressStartY = rb.position.y;
     }
 
     private void Start()
@@ -65,7 +63,6 @@ public class KingController : MonoBehaviour
         {
             ChangeState(State.GoGoal);
         }
-        UpdateProgressBar();
     }
 
     private void FixedUpdate()
@@ -140,20 +137,6 @@ public class KingController : MonoBehaviour
     private bool HasReached(Vector2 destination)
     {
         return Vector2.SqrMagnitude(rb.position - destination) <= arrivalDistance * arrivalDistance;
-    }
-
-    private void UpdateProgressBar()
-    {
-        UIHandler uiHandler = UIHandler.instance;
-        if (uiHandler == null)
-        {
-            return;
-        }
-
-        float progress = Mathf.Approximately(progressStartY, goalPos.y)
-            ? (rb.position.y >= goalPos.y ? 1f : 0f)
-            : Mathf.InverseLerp(progressStartY, goalPos.y, rb.position.y);
-        uiHandler.SetProgressValue(progress);
     }
 
     private void ChangeState(State nextState)
