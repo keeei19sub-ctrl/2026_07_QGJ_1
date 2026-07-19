@@ -802,7 +802,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cb1e7ec27bc57c429916a2864ad0d14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HPBarResult
-  maxSize: 1
+  maxSize: 11
 --- !u!212 &896347713
 SpriteRenderer:
   serializedVersion: 3

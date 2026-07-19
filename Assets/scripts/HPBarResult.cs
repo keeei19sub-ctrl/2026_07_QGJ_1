@@ -11,8 +11,8 @@ public class HPBarResult : MonoBehaviour
     {
         pos=transform.position;
         size=transform.localScale;
-        size.x=maxSize*KingHealth.hp/KingHealth.maxHp;
-        pos.x+=-maxSize*(KingHealth.maxHp-KingHealth.hp)/(KingHealth.maxHp*2);
+        size.x=(float)KingHealth.hp/KingHealth.maxHp;
+        pos.x+=-maxSize*(KingHealth.maxHp-KingHealth.hp)/((float)KingHealth.maxHp*2);
         transform.position=pos;
         transform.localScale=size;
 
