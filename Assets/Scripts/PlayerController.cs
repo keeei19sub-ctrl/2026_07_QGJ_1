@@ -17,11 +17,13 @@ public class PlayerController : MonoBehaviour
 
     Rigidbody2D rigidbody2d;
     Vector2 move;
-    Vector2 rayDirection = Vector2.right;
     public float Speed = 10.0f;
     float maxCordinateXPlus = 4.6f;
     float maxCordinateXMinus = -2.7f;
     int parasolDirection = 0;
+
+    [Header("Shop Interaction")]
+    [SerializeField, Min(0f)] private float shopInteractionRadius = 1.5f;
 
     public bool IsUmbrellaSwinging => parasolDirection != 0;
 
@@ -136,23 +138,13 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateShopInteraction()
     {
-        const float rayDistance = 1f;
-        if (move.sqrMagnitude > 0.001f)
-        {
-            rayDirection = move.normalized;
-        }
-
-        RaycastHit2D hit = Physics2D.Raycast(
+        Collider2D shopCollider = Physics2D.OverlapCircle(
             rigidbody2d.position,
-            rayDirection,
-            rayDistance,
+            shopInteractionRadius,
             LayerMask.GetMask("Shop"));
 
-        Color rayColor = hit.collider != null ? Color.green : Color.red;
-        Debug.DrawRay(rigidbody2d.position, rayDirection * rayDistance, rayColor);
-
-        Shop detectedShop = hit.collider != null
-            ? hit.collider.GetComponentInParent<Shop>()
+        Shop detectedShop = shopCollider != null
+            ? shopCollider.GetComponentInParent<Shop>()
             : null;
 
         if (detectedShop != currentShop)

@@ -295,6 +295,7 @@ MonoBehaviour:
       m_Flags: 0
     m_Flags: 0
   Speed: 10
+  shopInteractionRadius: 1.5
   leftHitbox: {fileID: 5412434879067278852}
   rightHitbox: {fileID: 1942096711964781411}
   wallet: {fileID: 771204986300100003}
