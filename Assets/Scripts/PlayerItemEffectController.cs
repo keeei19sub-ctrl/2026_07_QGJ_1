@@ -29,12 +29,8 @@ public sealed class PlayerItemEffectController : MonoBehaviour
     [SerializeField] private int healingItemSortingOrder = 20;
 
     [Header("Stone Stop Shockwave")]
-    [SerializeField] private Texture2D shockwaveTexture;
-    [SerializeField, Min(1)] private int shockwaveColumns = 10;
-    [SerializeField, Min(1)] private int shockwaveFrameCount = 40;
-    [SerializeField, Min(1f)] private float shockwaveFramesPerSecond = 30f;
-    [SerializeField, Min(0.01f)] private float shockwaveScale = 1f;
-    [SerializeField] private int shockwaveSortingOrder = 30;
+    [SerializeField] private GameObject shockwavePrefab;
+    [SerializeField, Min(0.01f)] private float shockwaveFallbackLifetime = 1.5f;
 
     private TransformState umbrellaBaseState;
     private TransformState shadowBaseState;
@@ -46,10 +42,8 @@ public sealed class PlayerItemEffectController : MonoBehaviour
     private bool umbrellaExpanded;
     private Coroutine umbrellaTimer;
     private Coroutine healingDelivery;
-    private Coroutine shockwaveAnimation;
     private GameObject healingItemVisual;
     private GameObject shockwaveVisual;
-    private Sprite[] shockwaveFrames;
 
     private void Awake()
     {
@@ -210,92 +204,52 @@ public sealed class PlayerItemEffectController : MonoBehaviour
 
     private void PlayShockwave()
     {
-        if (shockwaveTexture == null
-            || shockwaveColumns <= 0
-            || shockwaveFrameCount <= 0)
+        if (shockwavePrefab == null)
         {
             return;
         }
 
         DestroyShockwaveVisual();
-        shockwaveAnimation = StartCoroutine(AnimateShockwave());
+        shockwaveVisual = Instantiate(
+            shockwavePrefab,
+            transform.position,
+            Quaternion.identity);
+
+        float lifetime = GetShockwaveLifetime(shockwaveVisual);
+        Destroy(shockwaveVisual, lifetime);
     }
 
-    private IEnumerator AnimateShockwave()
+    private float GetShockwaveLifetime(GameObject effect)
     {
-        int frameWidth = shockwaveTexture.width / shockwaveColumns;
-        int frameHeight = frameWidth;
-        int availableRows = shockwaveTexture.height / frameHeight;
-        int availableFrameCount = shockwaveColumns * availableRows;
-        int frameCount = Mathf.Min(shockwaveFrameCount, availableFrameCount);
-        if (frameWidth <= 0 || frameHeight <= 0 || frameCount <= 0)
+        Animator animator = effect != null
+            ? effect.GetComponentInChildren<Animator>()
+            : null;
+        if (animator == null || animator.runtimeAnimatorController == null)
         {
-            shockwaveAnimation = null;
-            yield break;
+            return shockwaveFallbackLifetime;
         }
 
-        shockwaveVisual = new GameObject("Stone Stop Shockwave");
-        shockwaveVisual.transform.position = transform.position;
-        shockwaveVisual.transform.localScale = Vector3.one * shockwaveScale;
-
-        SpriteRenderer spriteRenderer = shockwaveVisual.AddComponent<SpriteRenderer>();
-        spriteRenderer.sortingOrder = shockwaveSortingOrder;
-        shockwaveFrames = new Sprite[frameCount];
-
-        float frameDuration = 1f / Mathf.Max(1f, shockwaveFramesPerSecond);
-        for (int frameIndex = 0; frameIndex < frameCount; frameIndex++)
+        float longestClipLength = 0f;
+        foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
         {
-            int column = frameIndex % shockwaveColumns;
-            int rowFromTop = frameIndex / shockwaveColumns;
-            Rect frameRect = new Rect(
-                column * frameWidth,
-                shockwaveTexture.height - (rowFromTop + 1) * frameHeight,
-                frameWidth,
-                frameHeight);
-
-            Sprite frame = Sprite.Create(
-                shockwaveTexture,
-                frameRect,
-                new Vector2(0.5f, 0.5f),
-                100f);
-            frame.name = $"Shockwave Frame {frameIndex}";
-            shockwaveFrames[frameIndex] = frame;
-            spriteRenderer.sprite = frame;
-            yield return new WaitForSeconds(frameDuration);
+            if (clip != null)
+            {
+                longestClipLength = Mathf.Max(longestClipLength, clip.length);
+            }
         }
 
-        shockwaveAnimation = null;
-        DestroyShockwaveVisual();
+        return longestClipLength > 0f
+            ? longestClipLength
+            : shockwaveFallbackLifetime;
     }
 
     private void DestroyShockwaveVisual()
     {
-        if (shockwaveAnimation != null)
-        {
-            StopCoroutine(shockwaveAnimation);
-            shockwaveAnimation = null;
-        }
-
         if (shockwaveVisual != null)
         {
             Destroy(shockwaveVisual);
             shockwaveVisual = null;
         }
-
-        if (shockwaveFrames == null)
-        {
-            return;
-        }
-
-        foreach (Sprite frame in shockwaveFrames)
-        {
-            if (frame != null)
-            {
-                Destroy(frame);
-            }
-        }
-
-        shockwaveFrames = null;
     }
 
     private bool ExpandUmbrella(float multiplier, float duration)

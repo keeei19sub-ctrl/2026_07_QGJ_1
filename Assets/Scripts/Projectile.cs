@@ -10,6 +10,7 @@ public class Projectile : MonoBehaviour
     [SerializeField, Min(0f)] private float speed = 5f;
     [SerializeField, Min(0f)] private float maxTravelDistance = 100f;
     [SerializeField] private AudioSource seDeffence;
+    [SerializeField] private AudioSource seThrow;
     [SerializeField] private GameObject effectBreakPrefab;
 
     private Rigidbody2D rb;
@@ -22,6 +23,7 @@ public class Projectile : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         spawnPosition = rb.position;
+        seThrow.Play();
     }
 
     public void Initialize(Vector2 targetPosition)
