@@ -14,6 +14,7 @@ public class KingHealth : MonoBehaviour
     public int CurrentHealth => hp;
     public int MaxHealth => maxHp;
 
+    [SerializeField] private AudioSource seHeal;
     private void Awake()
     {
         InitializeHealth();
@@ -48,6 +49,7 @@ public class KingHealth : MonoBehaviour
 
         InitializeHealth();
         hp = Mathf.Clamp(hp + amount, 0, maxHp);
+        seHeal.Play();
         RefreshHealthBar();
         return true;
     }

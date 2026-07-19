@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerWallet wallet;
     [SerializeField] private PlayerInventory inventory;
     [SerializeField] private PlayerItemEffectController itemEffectController;
+    [SerializeField] private AudioSource sePurchaseSuccess;
 
     Animator m_umbrella;
 
@@ -171,6 +172,7 @@ public class PlayerController : MonoBehaviour
         if (currentShop != null && BuyItem.WasPressedThisFrame())
         {
             PurchaseResult result = currentShop.TryPurchase(wallet, inventory);
+            if(result == PurchaseResult.Success)sePurchaseSuccess.Play();
             UIHandler.instance?.ShowPurchaseResult(result);
         }
     }

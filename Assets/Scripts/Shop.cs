@@ -15,6 +15,7 @@ public sealed class Shop : MonoBehaviour
     [SerializeField] private ItemDefinition item;
 
     public ItemDefinition Item => item;
+    
 
     public void Initialize(ItemDefinition product)
     {
@@ -57,7 +58,7 @@ public sealed class Shop : MonoBehaviour
             wallet.AddMoney(item.Price);
             return PurchaseResult.InvalidProduct;
         }
-            Debug.Log("succes");
+        Debug.Log("success");
 
         return PurchaseResult.Success;
     }
