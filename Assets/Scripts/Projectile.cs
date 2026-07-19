@@ -6,7 +6,7 @@ public class Projectile : MonoBehaviour
 {
     public event Action<Projectile> Destroyed;
 
-    [SerializeField] private int damage = 100;
+    [SerializeField] private int damage = 1000;
     [SerializeField, Min(0f)] private float speed = 5f;
     [SerializeField, Min(0f)] private float maxTravelDistance = 100f;
     [SerializeField] private AudioSource seDeffence;
