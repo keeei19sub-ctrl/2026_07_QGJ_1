@@ -59,6 +59,7 @@ MonoBehaviour:
   goalPos: {x: 1, y: 41}
   goalStartY: 35
   arrivalDistance: 0.05
+  resultScene: result
   state: 0
 --- !u!114 &1052517264748581369
 MonoBehaviour:
@@ -77,8 +78,8 @@ MonoBehaviour:
   firstStoreOffset: 3
   storeInterval: 10
   lastStoreY: 70
-  leftStoreX: -2
-  rightStoreX: 4
+  leftStoreX: -3
+  rightStoreX: 5
   productAssignments:
   - shopIndex: 2
     itemId: king_medicine
@@ -164,7 +165,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca9341472261037439a73d1ed7891bf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KingHealth
-  maxHp: 30000
   sunDamage: 1
   seHeal: {fileID: 8436915716920995060}
 --- !u!114 &5415553240187018672

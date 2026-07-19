@@ -51,6 +51,7 @@ MonoBehaviour:
   lastStoreY: 90
   leftStoreX: -2
   rightStoreX: 4
+  unassignedShopItemId: king_medicine
   productAssignments:
   - shopIndex: 2
     itemId: king_medicine

@@ -4,15 +4,15 @@ using UnityEngine.InputSystem;
 
 public class clickToStart : MonoBehaviour
 {
-    [SerializeField] private string nextScene = "koh";
+    [SerializeField] private string nextScene = "main";
 
     private bool isTransitioning;
 
     private void Update()
     {
         if (!isTransitioning
-            && Mouse.current != null
-            && Mouse.current.leftButton.wasPressedThisFrame)
+            && Keyboard.current != null
+            && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             LoadNextScene();
         }

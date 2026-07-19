@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 public class KingHealth : MonoBehaviour
 {
     public static int hp;
-    public static int maxHp = 30000;
+    public static int maxHp = 50000;
 
     private bool initialized;
 

@@ -8,6 +8,8 @@ public class startTalk : MonoBehaviour
     [SerializeField] private GameObject king;
     [SerializeField] private GameObject player;
     [SerializeField] private string nextScene = "main";
+    public InputAction space;
+
 
     public bool talking;
     private int talk;
@@ -17,6 +19,7 @@ public class startTalk : MonoBehaviour
     {
         talking = true;
         talk = 0;
+        space.Enable();
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -37,6 +40,7 @@ public class startTalk : MonoBehaviour
         {
             return;
         }
+        if(!space.WasPressedThisFrame())return;
 
         talk++;
         if (talk == 1 || talk == 4)

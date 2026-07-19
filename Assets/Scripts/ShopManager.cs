@@ -35,7 +35,9 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private float lastStoreY = 70f;
     [SerializeField] private float leftStoreX = -3f;
     [SerializeField] private float rightStoreX = 8f;
-    [Tooltip("0始まりの店舗番号と商品ID。未登録の店舗は空店舗になる")]
+    [Tooltip("商品が未登録の店舗で販売する商品ID")]
+    [SerializeField] private string unassignedShopItemId = "king_medicine";
+    [Tooltip("0始まりの店舗番号と商品ID。未登録の店舗は上の商品を販売する")]
     [SerializeField] private List<ShopProductAssignment> productAssignments = new();
 
     private float firstStoreY;
@@ -59,15 +61,24 @@ public class ShopManager : MonoBehaviour
         }
 
         Dictionary<int, ItemDefinition> productsByShop = BuildProductLookup();
+        itemCatalog.TryGetById(unassignedShopItemId, out ItemDefinition unassignedShopProduct);
         int shopIndex = 0;
 
         for (float storeY = firstStoreY; storeY <= lastStoreY; storeY += storeInterval)
         {
-            productsByShop.TryGetValue(shopIndex, out ItemDefinition leftProduct);
+            if (!productsByShop.TryGetValue(shopIndex, out ItemDefinition leftProduct))
+            {
+                leftProduct = unassignedShopProduct;
+            }
+
             SpawnShop(new Vector2(leftStoreX - 2f, storeY), leftProduct, shopIndex);
             shopIndex++;
 
-            productsByShop.TryGetValue(shopIndex, out ItemDefinition rightProduct);
+            if (!productsByShop.TryGetValue(shopIndex, out ItemDefinition rightProduct))
+            {
+                rightProduct = unassignedShopProduct;
+            }
+
             SpawnShop(new Vector2(rightStoreX + 2f, storeY), rightProduct, shopIndex);
             shopIndex++;
 
@@ -141,6 +152,19 @@ public class ShopManager : MonoBehaviour
                 {
                     AppendError(errors, $"Item catalog is missing required effect type '{effectType}'.");
                 }
+            }
+
+            if (!itemCatalog.TryGetById(unassignedShopItemId, out ItemDefinition unassignedShopItem))
+            {
+                AppendError(
+                    errors,
+                    $"Unassigned-shop item ID '{unassignedShopItemId}' was not found in the item catalog.");
+            }
+            else if (unassignedShopItem.EffectType != ItemEffectType.HealKing)
+            {
+                AppendError(
+                    errors,
+                    $"Unassigned shops must sell a healing item, but '{unassignedShopItemId}' is not one.");
             }
 
             ValidateProductAssignments(requiredShopCount, errors);
