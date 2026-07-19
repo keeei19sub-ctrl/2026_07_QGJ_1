@@ -3,9 +3,9 @@ using UnityEngine.SceneManagement;
 
 public class KingHealth : MonoBehaviour
 {
-    [SerializeField, Min(1)] private int maxHp = 30000;
+    public static int hp;
+    public static int maxHp = 30000;
 
-    private int hp;
     private bool initialized;
 
     public int sunDamage = 1;
