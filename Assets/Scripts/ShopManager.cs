@@ -15,7 +15,6 @@ public sealed class ShopProductAssignment
 
 public class ShopManager : MonoBehaviour
 {
-    private const int ExpectedShopCount = 14;
     private const int ExpectedSalesShopCount = 6;
 
     private static readonly ItemEffectType[] RequiredEffectTypes =
@@ -126,13 +125,6 @@ public class ShopManager : MonoBehaviour
         else if (shopPrefab.GetComponent<Shop>() == null)
         {
             AppendError(errors, "The shop prefab requires a Shop component.");
-        }
-
-        if (requiredShopCount != ExpectedShopCount)
-        {
-            AppendError(
-                errors,
-                $"ShopManager must generate {ExpectedShopCount} shops, but its position settings generate {requiredShopCount}.");
         }
 
         if (itemCatalog == null)
