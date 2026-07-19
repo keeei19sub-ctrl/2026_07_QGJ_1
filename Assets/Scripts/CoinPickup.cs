@@ -7,6 +7,7 @@ using UnityEngine;
 public sealed class CoinPickup : MonoBehaviour
 {
     [SerializeField] private CircleCollider2D pickupCollider;
+    [SerializeField] private AudioClip pickupSound;
 
     private Coroutine flightCoroutine;
     private int rewardAmount;
@@ -97,6 +98,12 @@ public sealed class CoinPickup : MonoBehaviour
 
         collected = true;
         pickupCollider.enabled = false;
+
+        if (pickupSound != null)
+        {
+            AudioSource.PlayClipAtPoint(pickupSound, transform.position);
+        }
+
         Destroy(gameObject);
     }
 

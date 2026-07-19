@@ -488,6 +488,12 @@ MonoBehaviour:
   healingItemArcHeight: 2
   healingItemScale: 0.75
   healingItemSortingOrder: 20
+  shockwaveTexture: {fileID: 2800000, guid: d1069f7e2c527ac46b04c7d2b6dde69d, type: 3}
+  shockwaveColumns: 10
+  shockwaveFrameCount: 40
+  shockwaveFramesPerSecond: 30
+  shockwaveScale: 1
+  shockwaveSortingOrder: 30
 --- !u!82 &9043895563100220609
 AudioSource:
   m_ObjectHideFlags: 0

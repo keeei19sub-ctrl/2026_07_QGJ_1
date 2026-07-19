@@ -291,6 +291,7 @@ MonoBehaviour:
   downwardDistance: 0.5
   flightDuration: 0.6
   arcHeight: 1.2
+  throwSound: {fileID: 8300000, guid: f3f14188e8713564199c7d3635929982, type: 3}
 --- !u!82 &8436915716920995060
 AudioSource:
   m_ObjectHideFlags: 0

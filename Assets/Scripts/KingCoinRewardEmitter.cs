@@ -18,6 +18,7 @@ public sealed class KingCoinRewardEmitter : MonoBehaviour
     [SerializeField, Min(0f)] private float downwardDistance = 0.5f;
     [SerializeField, Min(0f)] private float flightDuration = 0.6f;
     [SerializeField, Min(0f)] private float arcHeight = 1.2f;
+    [SerializeField] private AudioClip throwSound;
 
     private KingSun kingSun;
     private readonly HashSet<CoinPickup> activeCoins = new();
@@ -71,6 +72,11 @@ public sealed class KingCoinRewardEmitter : MonoBehaviour
         activeCoins.Add(coin);
         coin.Removed += OnCoinRemoved;
         coin.Initialize(rewardAmount, landingPosition, flightDuration, arcHeight);
+
+        if (throwSound != null)
+        {
+            AudioSource.PlayClipAtPoint(throwSound, spawnPosition);
+        }
     }
 
     private void OnCoinRemoved(CoinPickup coin)

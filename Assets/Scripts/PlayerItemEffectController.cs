@@ -28,6 +28,14 @@ public sealed class PlayerItemEffectController : MonoBehaviour
     [SerializeField, Min(0.01f)] private float healingItemScale = 0.75f;
     [SerializeField] private int healingItemSortingOrder = 20;
 
+    [Header("Stone Stop Shockwave")]
+    [SerializeField] private Texture2D shockwaveTexture;
+    [SerializeField, Min(1)] private int shockwaveColumns = 10;
+    [SerializeField, Min(1)] private int shockwaveFrameCount = 40;
+    [SerializeField, Min(1f)] private float shockwaveFramesPerSecond = 30f;
+    [SerializeField, Min(0.01f)] private float shockwaveScale = 1f;
+    [SerializeField] private int shockwaveSortingOrder = 30;
+
     private TransformState umbrellaBaseState;
     private TransformState shadowBaseState;
     private BoxColliderState leftHitboxBaseState;
@@ -38,7 +46,10 @@ public sealed class PlayerItemEffectController : MonoBehaviour
     private bool umbrellaExpanded;
     private Coroutine umbrellaTimer;
     private Coroutine healingDelivery;
+    private Coroutine shockwaveAnimation;
     private GameObject healingItemVisual;
+    private GameObject shockwaveVisual;
+    private Sprite[] shockwaveFrames;
 
     private void Awake()
     {
@@ -88,8 +99,14 @@ public sealed class PlayerItemEffectController : MonoBehaviour
                     projectileManager = FindAnyObjectByType<ProjectileManager>();
                 }
 
-                return projectileManager != null
+                bool attacksSuppressed = projectileManager != null
                     && projectileManager.SuppressAttacks(item.EffectDuration);
+                if (attacksSuppressed)
+                {
+                    PlayShockwave();
+                }
+
+                return attacksSuppressed;
 
             default:
                 return false;
@@ -189,6 +206,96 @@ public sealed class PlayerItemEffectController : MonoBehaviour
 
         Destroy(healingItemVisual);
         healingItemVisual = null;
+    }
+
+    private void PlayShockwave()
+    {
+        if (shockwaveTexture == null
+            || shockwaveColumns <= 0
+            || shockwaveFrameCount <= 0)
+        {
+            return;
+        }
+
+        DestroyShockwaveVisual();
+        shockwaveAnimation = StartCoroutine(AnimateShockwave());
+    }
+
+    private IEnumerator AnimateShockwave()
+    {
+        int frameWidth = shockwaveTexture.width / shockwaveColumns;
+        int frameHeight = frameWidth;
+        int availableRows = shockwaveTexture.height / frameHeight;
+        int availableFrameCount = shockwaveColumns * availableRows;
+        int frameCount = Mathf.Min(shockwaveFrameCount, availableFrameCount);
+        if (frameWidth <= 0 || frameHeight <= 0 || frameCount <= 0)
+        {
+            shockwaveAnimation = null;
+            yield break;
+        }
+
+        shockwaveVisual = new GameObject("Stone Stop Shockwave");
+        shockwaveVisual.transform.position = transform.position;
+        shockwaveVisual.transform.localScale = Vector3.one * shockwaveScale;
+
+        SpriteRenderer spriteRenderer = shockwaveVisual.AddComponent<SpriteRenderer>();
+        spriteRenderer.sortingOrder = shockwaveSortingOrder;
+        shockwaveFrames = new Sprite[frameCount];
+
+        float frameDuration = 1f / Mathf.Max(1f, shockwaveFramesPerSecond);
+        for (int frameIndex = 0; frameIndex < frameCount; frameIndex++)
+        {
+            int column = frameIndex % shockwaveColumns;
+            int rowFromTop = frameIndex / shockwaveColumns;
+            Rect frameRect = new Rect(
+                column * frameWidth,
+                shockwaveTexture.height - (rowFromTop + 1) * frameHeight,
+                frameWidth,
+                frameHeight);
+
+            Sprite frame = Sprite.Create(
+                shockwaveTexture,
+                frameRect,
+                new Vector2(0.5f, 0.5f),
+                100f);
+            frame.name = $"Shockwave Frame {frameIndex}";
+            shockwaveFrames[frameIndex] = frame;
+            spriteRenderer.sprite = frame;
+            yield return new WaitForSeconds(frameDuration);
+        }
+
+        shockwaveAnimation = null;
+        DestroyShockwaveVisual();
+    }
+
+    private void DestroyShockwaveVisual()
+    {
+        if (shockwaveAnimation != null)
+        {
+            StopCoroutine(shockwaveAnimation);
+            shockwaveAnimation = null;
+        }
+
+        if (shockwaveVisual != null)
+        {
+            Destroy(shockwaveVisual);
+            shockwaveVisual = null;
+        }
+
+        if (shockwaveFrames == null)
+        {
+            return;
+        }
+
+        foreach (Sprite frame in shockwaveFrames)
+        {
+            if (frame != null)
+            {
+                Destroy(frame);
+            }
+        }
+
+        shockwaveFrames = null;
     }
 
     private bool ExpandUmbrella(float multiplier, float duration)
@@ -328,6 +435,7 @@ public sealed class PlayerItemEffectController : MonoBehaviour
         }
 
         DestroyHealingItemVisual();
+        DestroyShockwaveVisual();
 
         if (umbrellaTimer != null)
         {

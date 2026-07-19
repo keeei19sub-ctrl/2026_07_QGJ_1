@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoinPickup
   pickupCollider: {fileID: 5800000}
+  pickupSound: {fileID: 8300000, guid: d1ec7ff2ab731c14994b002088fce269, type: 3}
 --- !u!212 &21200000
 SpriteRenderer:
   serializedVersion: 3
