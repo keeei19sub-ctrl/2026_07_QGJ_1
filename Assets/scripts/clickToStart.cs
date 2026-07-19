@@ -1,20 +1,34 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+
 public class clickToStart : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private string nextScene = "koh";
 
-    // Update is called once per frame
-    void Update()
+    private bool isTransitioning;
+
+    private void Update()
     {
-        if(Mouse.current.leftButton.wasPressedThisFrame){
-            SceneManager.LoadScene("main");
+        if (!isTransitioning
+            && Mouse.current != null
+            && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            LoadNextScene();
         }
     }
-}
 
+    private void LoadNextScene()
+    {
+        if (!Application.CanStreamedLevelBeLoaded(nextScene))
+        {
+            Debug.LogError(
+                $"Scene '{nextScene}' is not included in Build Settings.",
+                this);
+            return;
+        }
+
+        isTransitioning = true;
+        SceneManager.LoadScene(nextScene);
+    }
+}

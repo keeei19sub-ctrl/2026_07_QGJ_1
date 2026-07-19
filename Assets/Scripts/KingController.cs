@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class KingController : MonoBehaviour
@@ -15,6 +16,7 @@ public class KingController : MonoBehaviour
     [SerializeField] private Vector2 goalPos;
     [SerializeField] private float goalStartY = 35f;
     [SerializeField, Min(0.001f)] private float arrivalDistance = 0.05f;
+    [SerializeField] private string resultScene = "result";
     private Animator animator;
 
     private enum State
@@ -89,6 +91,7 @@ public class KingController : MonoBehaviour
                 {
                     rb.position = goalPos;
                     ChangeState(State.Goal);
+                    LoadResultScene();
                 }
                 break;
         }
@@ -154,6 +157,19 @@ public class KingController : MonoBehaviour
     private bool HasReached(Vector2 destination)
     {
         return Vector2.SqrMagnitude(rb.position - destination) <= arrivalDistance * arrivalDistance;
+    }
+
+    private void LoadResultScene()
+    {
+        if (Application.CanStreamedLevelBeLoaded(resultScene))
+        {
+            SceneManager.LoadScene(resultScene);
+            return;
+        }
+
+        Debug.LogError(
+            $"Scene '{resultScene}' is not included in Build Settings.",
+            this);
     }
 
     private void ChangeState(State nextState)

@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/title.unity
     guid: 4eb64f637c12f194b8c4982270d405f5
   - enabled: 1
+    path: Assets/koh.unity
+    guid: 66cc7bd78f5e3604eb7783052c6caa08
+  - enabled: 1
     path: Assets/coconMain.unity
     guid: d41d00695ae039a409ebe14857c438b1
   - enabled: 1

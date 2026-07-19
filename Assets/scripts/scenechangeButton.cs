@@ -1,22 +1,29 @@
 using UnityEngine;
-
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class scenechangeButton : MonoBehaviour, IPointerClickHandler
 {
-    [SerializeField] private  string toScene;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private string toScene;
 
-    // Update is called once per frame
-    void Update()
+    private bool isTransitioning;
+
+    public void OnPointerClick(PointerEventData eventData)
     {
-    }
-    public void OnPointerClick(PointerEventData eventData){
+        if (isTransitioning)
+        {
+            return;
+        }
+
+        if (!Application.CanStreamedLevelBeLoaded(toScene))
+        {
+            Debug.LogError(
+                $"Scene '{toScene}' is not included in Build Settings.",
+                this);
+            return;
+        }
+
+        isTransitioning = true;
         SceneManager.LoadScene(toScene);
     }
 }
