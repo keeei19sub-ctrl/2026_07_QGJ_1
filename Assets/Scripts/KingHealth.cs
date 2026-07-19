@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class KingHealth : MonoBehaviour
 {
@@ -85,5 +86,6 @@ public class KingHealth : MonoBehaviour
     private void Angry()
     {
         Debug.Log("angry");
+        SceneManager.LoadScene("game_over");
     }
 }
