@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 49f89b376550fda40bd05f6f9825e9e2
+guid: f0a1bf3f20ff45443985edac579b2476
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6840857970483876212
-    second: shop_0
+      213: 6026151842308396209
+    second: ProgressBar_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: shop_0
+      name: ProgressBar_0
       rect:
         serializedVersion: 2
-        x: 14
-        y: 32
-        width: 487
-        height: 547
+        x: 59
+        y: 48
+        width: 105
+        height: 744
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4715799641c9fee50800000000000000
-      internalID: 6840857970483876212
+      spriteID: 1b49b533c2131a350800000000000000
+      internalID: 6026151842308396209
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      shop_0: 6840857970483876212
+      ProgressBar_0: 6026151842308396209
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

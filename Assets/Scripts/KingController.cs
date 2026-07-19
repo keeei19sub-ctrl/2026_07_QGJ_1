@@ -4,6 +4,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class KingController : MonoBehaviour
 {
+    private static readonly int IsBackParameter = Animator.StringToHash("IsBack");
+    private static readonly int IsRightParameter = Animator.StringToHash("IsRight");
+
     public event Action DestinationRequested;
     public event Action DestinationReached;
 
@@ -12,6 +15,7 @@ public class KingController : MonoBehaviour
     [SerializeField] private Vector2 goalPos;
     [SerializeField] private float goalStartY = 35f;
     [SerializeField, Min(0.001f)] private float arrivalDistance = 0.05f;
+    private Animator animator;
 
     private enum State
     {
@@ -27,11 +31,14 @@ public class KingController : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 nextDestination;
     private Vector2? pendingDestination;
+    private bool nextDestinationIsRight;
+    private bool pendingDestinationIsRight;
     private float shoppingTimer;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     private void Start()
@@ -48,10 +55,12 @@ public class KingController : MonoBehaviour
                 {
                     EnterShopping();
                 }
+                animator.SetBool("IsShopping", false);
                 break;
 
             case State.Shopping:
                 shoppingTimer -= Time.deltaTime;
+                animator.SetBool("IsShopping", true);
                 if (shoppingTimer <= 0f)
                 {
                     AcquireNextDestination();
@@ -71,6 +80,7 @@ public class KingController : MonoBehaviour
         {
             case State.GoShop:
                 MoveTowards(nextDestination);
+
                 break;
 
             case State.GoGoal:
@@ -96,14 +106,20 @@ public class KingController : MonoBehaviour
     /// Sets the destination that will be acquired when the king next chooses where to go.
     /// If the king is already waiting, the destination is acquired immediately.
     /// </summary>
-    public void SetNextDestination(Vector2 destination)
+    public void SetNextDestination(Vector2 destination, bool isRight)
     {
         pendingDestination = destination;
+        pendingDestinationIsRight = isRight;
 
         if (state == State.WaitingForDestination)
         {
             AcquireNextDestination();
         }
+    }
+
+    public void SetIsBack(bool isBack)
+    {
+        animator.SetBool(IsBackParameter, isBack);
     }
 
     private void AcquireNextDestination()
@@ -120,6 +136,7 @@ public class KingController : MonoBehaviour
         }
 
         nextDestination = pendingDestination.Value;
+        nextDestinationIsRight = pendingDestinationIsRight;
         pendingDestination = null;
         ChangeState(State.GoShop);
     }
@@ -147,6 +164,12 @@ public class KingController : MonoBehaviour
         }
 
         state = nextState;
+        if (state == State.Shopping)
+        {
+            SetIsBack(false);
+            animator.SetBool(IsRightParameter, nextDestinationIsRight);
+        }
+
         Debug.Log($"King state changed to {state}.", this);
     }
 }

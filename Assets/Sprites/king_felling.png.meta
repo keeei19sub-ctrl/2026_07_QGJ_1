@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 49f89b376550fda40bd05f6f9825e9e2
+guid: 52e2a12009dda344eb489b7afd89a6e0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6840857970483876212
-    second: shop_0
+      213: 7138459726014649139
+    second: king_felling_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: shop_0
+      name: king_felling_0
       rect:
         serializedVersion: 2
-        x: 14
-        y: 32
-        width: 487
-        height: 547
+        x: 23
+        y: 14
+        width: 772
+        height: 164
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4715799641c9fee50800000000000000
-      internalID: 6840857970483876212
+      spriteID: 3331984bc47e01360800000000000000
+      internalID: 7138459726014649139
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      shop_0: 6840857970483876212
+      king_felling_0: 7138459726014649139
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
