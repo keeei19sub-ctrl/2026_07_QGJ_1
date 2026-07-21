@@ -4,6 +4,7 @@ public sealed class ElapsedTimer
     private float duration;
 
     public bool IsRunning { get; private set; }
+    public float StartedAt => startedAt;
     public float Duration => duration;
 
     public bool Start(float currentTime, float newDuration)

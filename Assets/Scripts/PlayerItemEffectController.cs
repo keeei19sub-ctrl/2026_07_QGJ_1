@@ -87,6 +87,31 @@ public sealed class PlayerItemEffectController : MonoBehaviour
         return effectApplied && inventory.TryConsumeSelected();
     }
 
+    public bool TryGetTimedEffectProgress(out float progress)
+    {
+        ElapsedTimer activeTimer = null;
+        if (umbrellaEffectTimer.IsRunning)
+        {
+            activeTimer = umbrellaEffectTimer;
+        }
+
+        if (projectileStopEffectTimer.IsRunning
+            && (activeTimer == null
+                || projectileStopEffectTimer.StartedAt >= activeTimer.StartedAt))
+        {
+            activeTimer = projectileStopEffectTimer;
+        }
+
+        if (activeTimer == null)
+        {
+            progress = 0f;
+            return false;
+        }
+
+        progress = activeTimer.GetProgress(Time.time);
+        return true;
+    }
+
     public bool TryApplyEffect(ItemDefinition item)
     {
         if (item == null)

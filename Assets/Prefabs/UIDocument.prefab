@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6123298184764388521}
   - component: {fileID: 7337135688550095909}
   - component: {fileID: 8554791057356886758}
+  - component: {fileID: 3264738217643801975}
   m_Layer: 5
   m_Name: UIDocument
   m_TagString: Untagged
@@ -94,3 +95,19 @@ MonoBehaviour:
   kingRenderer: {fileID: 0}
   targetCamera: {fileID: 0}
   uiHandler: {fileID: 7337135688550095909}
+--- !u!114 &3264738217643801975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3791467995347942380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37fde0d5b98f63e428c5fb22c9184fda, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TimerProgressRing
+  itemEffectController: {fileID: 0}
+  gaugeSprite: {fileID: -553165712849033412, guid: ec1e4d81b298e8243aec84079e5bda83, type: 3}
+  trackColor: {r: 0, g: 0, b: 0, a: 0.45}
+  fillColor: {r: 1, g: 1, b: 1, a: 1}
