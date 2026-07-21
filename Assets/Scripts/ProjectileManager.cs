@@ -15,7 +15,6 @@ public class ProjectileManager : MonoBehaviour
     private readonly HashSet<Projectile> activeProjectiles = new();
     private float attackIntervalTimer;
     private Coroutine pendingAttack;
-    private Coroutine suppressionTimer;
 
     public bool AreAttacksSuppressed { get; private set; }
 
@@ -116,9 +115,9 @@ public class ProjectileManager : MonoBehaviour
         OnProjectileDestroyed(projectile);
     }
 
-    public bool SuppressAttacks(float duration)
+    public bool SuppressAttacks()
     {
-        if (duration <= 0f || !isActiveAndEnabled)
+        if (!isActiveAndEnabled)
         {
             return false;
         }
@@ -128,21 +127,11 @@ public class ProjectileManager : MonoBehaviour
         CancelPendingAttack();
         DespawnAllProjectiles();
         UIHandler.instance?.HideProjectileWarning();
-
-        if (suppressionTimer != null)
-        {
-            StopCoroutine(suppressionTimer);
-        }
-
-        suppressionTimer = StartCoroutine(SuppressionCountdown(duration));
         return true;
     }
 
-    private IEnumerator SuppressionCountdown(float duration)
+    public void ResumeAttacks()
     {
-        yield return new WaitForSeconds(duration);
-
-        suppressionTimer = null;
         AreAttacksSuppressed = false;
         attackIntervalTimer = attackInterval;
     }
@@ -175,15 +164,7 @@ public class ProjectileManager : MonoBehaviour
     private void OnDisable()
     {
         CancelPendingAttack();
-
-        if (suppressionTimer != null)
-        {
-            StopCoroutine(suppressionTimer);
-            suppressionTimer = null;
-        }
-
-        AreAttacksSuppressed = false;
-        attackIntervalTimer = attackInterval;
+        ResumeAttacks();
         UIHandler.instance?.HideProjectileWarning();
     }
 }

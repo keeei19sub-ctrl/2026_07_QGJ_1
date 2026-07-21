@@ -40,7 +40,8 @@ public sealed class PlayerItemEffectController : MonoBehaviour
     private CircleColliderState shadowColliderBaseState;
     private bool umbrellaBaseStateCaptured;
     private bool umbrellaExpanded;
-    private Coroutine umbrellaTimer;
+    private readonly ElapsedTimer umbrellaEffectTimer = new();
+    private readonly ElapsedTimer projectileStopEffectTimer = new();
     private Coroutine healingDelivery;
     private GameObject healingItemVisual;
     private GameObject shockwaveVisual;
@@ -48,6 +49,20 @@ public sealed class PlayerItemEffectController : MonoBehaviour
     private void Awake()
     {
         ResolvePlayerReferences();
+    }
+
+    private void Update()
+    {
+        float currentTime = Time.time;
+        if (umbrellaEffectTimer.TryComplete(currentTime))
+        {
+            RestoreUmbrella();
+        }
+
+        if (projectileStopEffectTimer.TryComplete(currentTime))
+        {
+            projectileManager?.ResumeAttacks();
+        }
     }
 
     public bool TryUseSelectedItem()
@@ -88,15 +103,21 @@ public sealed class PlayerItemEffectController : MonoBehaviour
                 return ExpandUmbrella(item.EffectAmount, item.EffectDuration);
 
             case ItemEffectType.StopProjectiles:
+                if (item.EffectDuration <= 0f)
+                {
+                    return false;
+                }
+
                 if (projectileManager == null)
                 {
                     projectileManager = FindAnyObjectByType<ProjectileManager>();
                 }
 
                 bool attacksSuppressed = projectileManager != null
-                    && projectileManager.SuppressAttacks(item.EffectDuration);
+                    && projectileManager.SuppressAttacks();
                 if (attacksSuppressed)
                 {
+                    projectileStopEffectTimer.Start(Time.time, item.EffectDuration);
                     PlayShockwave();
                 }
 
@@ -272,22 +293,7 @@ public sealed class PlayerItemEffectController : MonoBehaviour
 
         ApplyUmbrellaScale(multiplier);
         umbrellaExpanded = true;
-
-        if (umbrellaTimer != null)
-        {
-            StopCoroutine(umbrellaTimer);
-        }
-
-        umbrellaTimer = StartCoroutine(RestoreUmbrellaAfter(duration));
-        return true;
-    }
-
-    private IEnumerator RestoreUmbrellaAfter(float duration)
-    {
-        yield return new WaitForSeconds(duration);
-
-        umbrellaTimer = null;
-        RestoreUmbrella();
+        return umbrellaEffectTimer.Start(Time.time, duration);
     }
 
     private void ResolvePlayerReferences()
@@ -391,13 +397,10 @@ public sealed class PlayerItemEffectController : MonoBehaviour
         DestroyHealingItemVisual();
         DestroyShockwaveVisual();
 
-        if (umbrellaTimer != null)
-        {
-            StopCoroutine(umbrellaTimer);
-            umbrellaTimer = null;
-        }
-
+        umbrellaEffectTimer.Stop();
+        projectileStopEffectTimer.Stop();
         RestoreUmbrella();
+        projectileManager?.ResumeAttacks();
     }
 
     private readonly struct TransformState
