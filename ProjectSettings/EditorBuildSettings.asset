@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/title.unity
     guid: 4eb64f637c12f194b8c4982270d405f5
   - enabled: 1
+    path: Assets/tutorial.unity
+    guid: e2cb0c49cc842014eadcf17e5e0ec5d2
+  - enabled: 1
     path: Assets/koh.unity
     guid: 66cc7bd78f5e3604eb7783052c6caa08
   - enabled: 1

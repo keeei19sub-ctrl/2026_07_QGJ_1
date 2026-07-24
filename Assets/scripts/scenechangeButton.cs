@@ -2,13 +2,23 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class scenechangeButton : MonoBehaviour, IPointerClickHandler
+public class scenechangeButton : MonoBehaviour, IPointerClickHandler, ISubmitHandler
 {
     [SerializeField] private string toScene;
 
     private bool isTransitioning;
 
     public void OnPointerClick(PointerEventData eventData)
+    {
+        LoadTargetScene();
+    }
+
+    public void OnSubmit(BaseEventData eventData)
+    {
+        LoadTargetScene();
+    }
+
+    private void LoadTargetScene()
     {
         if (isTransitioning)
         {
