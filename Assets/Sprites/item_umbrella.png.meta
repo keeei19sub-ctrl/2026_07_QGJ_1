@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: b69173293e9dfa44e896b55831e6dbca
+guid: ec591dd260835d044a2459bb80b98a68
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1921337063021962082
-    second: tutorial_0
+      213: 3763716785814447782
+    second: item_umbrella_0
+  - first:
+      213: 1202504801282191015
+    second: item_umbrella_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +103,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: tutorial_0
+      name: item_umbrella_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1280
-        height: 720
+        width: 100
+        height: 100
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +118,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e9c98c0fe1a0655e0800000000000000
-      internalID: -1921337063021962082
+      spriteID: 6a625a5c9786b3430800000000000000
+      internalID: 3763716785814447782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_umbrella_1
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 99
+        width: 1
+        height: 1
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ae6021eeb720b010800000000000000
+      internalID: 1202504801282191015
       vertices: []
       indices: 
       edges: []
@@ -125,7 +150,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: cf9af81eb7af31842a90dbd96711d9dc
+    spriteID: a6b74a5d2314f9446883cb2cf88ef514
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +160,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      tutorial_0: -1921337063021962082
+      item_umbrella_0: 3763716785814447782
+      item_umbrella_1: 1202504801282191015
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

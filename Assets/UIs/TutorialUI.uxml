@@ -1,0 +1,3 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Sprites/tutorial.png?fileID=-1921337063021962082&amp;guid=b69173293e9dfa44e896b55831e6dbca&amp;type=3#tutorial_0&quot;);"/>
+</ui:UXML>

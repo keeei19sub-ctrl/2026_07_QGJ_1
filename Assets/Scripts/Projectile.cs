@@ -23,6 +23,10 @@ public class Projectile : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         spawnPosition = rb.position;
+    }
+
+    private void Start()
+    {
         seThrow.Play();
     }
 

@@ -14,7 +14,7 @@ public class KingController : MonoBehaviour
     [SerializeField, Min(0f)] private float speed = 5f;
     [SerializeField, Min(0f)] private float shoppingMaxTime = 1f;
     [SerializeField] private Vector2 goalPos;
-    [SerializeField] private float goalStartY = 35f;
+    [SerializeField] private float goalStartY = 70f;
     [SerializeField, Min(0.001f)] private float arrivalDistance = 0.05f;
     [SerializeField] private string resultScene = "result";
     private Animator animator;

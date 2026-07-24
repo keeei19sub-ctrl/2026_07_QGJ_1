@@ -79,6 +79,10 @@ MonoBehaviour:
   playerSpeechRenderer: {fileID: 0}
   kingSpeechTarget: {fileID: 0}
   kingSpeechRenderer: {fileID: 0}
+  inventoryFallbackSprite: {fileID: 7322885499304307244, guid: dff11f0a29175ad4ea8191928387d75a, type: 3}
+  kingMedicineSprite: {fileID: -3750097495944089515, guid: f5eefe3c94703f5488c6473c1b48ac2a, type: 3}
+  largeUmbrellaPotionSprite: {fileID: 3763716785814447782, guid: ec591dd260835d044a2459bb80b98a68, type: 3}
+  stoneStopCharmSprite: {fileID: 3182245679521015358, guid: 86a040cd1ca471247b16414141c6ab70, type: 3}
 --- !u!114 &8554791057356886758
 MonoBehaviour:
   m_ObjectHideFlags: 0

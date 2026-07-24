@@ -28,6 +28,12 @@ public class UIHandler : MonoBehaviour
     [SerializeField] private Transform kingSpeechTarget;
     [SerializeField] private SpriteRenderer kingSpeechRenderer;
 
+    [Header("Inventory Images")]
+    [SerializeField] private Sprite inventoryFallbackSprite;
+    [SerializeField] private Sprite kingMedicineSprite;
+    [SerializeField] private Sprite largeUmbrellaPotionSprite;
+    [SerializeField] private Sprite stoneStopCharmSprite;
+
     private VisualElement m_Healthbar;
     private VisualElement m_PlayerProgressIcon;
     private VisualElement m_KingProgressIcon;
@@ -36,6 +42,7 @@ public class UIHandler : MonoBehaviour
     private VisualElement m_ProjectileWarningLeft;
     private VisualElement m_ProjectileWarningRight;
     private VisualElement m_ShopUI;
+    private VisualElement m_InventoryImage;
     private Label m_MoneyLabel;
     private Label m_SelectedItemLabel;
     private Label m_SelectedItemCountLabel;
@@ -112,6 +119,7 @@ public class UIHandler : MonoBehaviour
             root.Q<Label>("KingSpeechLabel"),
             kingSpeechTarget,
             kingSpeechRenderer);
+        m_InventoryImage = root.Q<VisualElement>("ItemPicture");
 
         if (speechCamera == null)
         {
@@ -265,6 +273,26 @@ public class UIHandler : MonoBehaviour
         RefreshPlayerUI();
     }
 
+    private void ChangeItemImage(string itemId)
+    {
+        if (m_InventoryImage == null)
+        {
+            return;
+        }
+
+        Sprite sprite = InventoryImg.ItemImg(itemId) switch
+        {
+            "item_cake" => kingMedicineSprite,
+            "item_umbrella" => largeUmbrellaPotionSprite,
+            "item_pan" => stoneStopCharmSprite,
+            _ => inventoryFallbackSprite
+        };
+
+        if (sprite != null)
+        {
+            m_InventoryImage.style.backgroundImage = new StyleBackground(sprite);
+        }
+    }
     public void ShowShop(Shop shop)
     {
         m_VisibleShop = shop;
@@ -635,6 +663,7 @@ public class UIHandler : MonoBehaviour
             SetLabelText(m_SelectedItemLabel, "アイテムなし");
             SetLabelText(m_SelectedItemCountLabel, "×0");
             SetLabelText(m_SelectedItemDescriptionLabel, "アイテムを入手すると、ここに説明が表示されます");
+            ChangeItemImage("none");
             SetItemPictureVisible(false);
             return;
         }
@@ -647,6 +676,7 @@ public class UIHandler : MonoBehaviour
         SetLabelText(
             m_SelectedItemDescriptionLabel,
             string.IsNullOrWhiteSpace(selectedItem.Description) ? "説明はありません" : selectedItem.Description);
+        ChangeItemImage(selectedItem.Id);
         SetItemPictureVisible(true);
     }
 
